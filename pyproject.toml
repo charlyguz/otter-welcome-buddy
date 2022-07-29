@@ -6,6 +6,7 @@ authors = ["goberinfinity <reyesfragosoroberto@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+"discord.py" = "^1.7.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
