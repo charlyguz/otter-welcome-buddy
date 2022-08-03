@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "otter-welcome-buddy"
+version = "0.1.0"
+description = ""
+authors = ["proyecto-nutria <contact@proyectonutria.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+"discord.py" = "^1.7.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+black = "^22.6.0"
+flake8 = "^4.0.1"
+pre-commit = "^2.20.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
