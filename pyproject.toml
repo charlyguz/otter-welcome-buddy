@@ -2,7 +2,7 @@
 name = "otter-welcome-buddy"
 version = "0.1.0"
 description = ""
-authors = ["goberinfinity <reyesfragosoroberto@gmail.com>"]
+authors = ["proyecto-nutria <contact@proyectonutria.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
