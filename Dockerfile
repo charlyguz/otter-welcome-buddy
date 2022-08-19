@@ -1,7 +1,6 @@
 # TODO: https://snyk.io/blog/best-practices-containerizing-python-docker/
-LABEL AUTHOR="Proyecto Nutria <contact@proyectonutria.com>"
-
 FROM python:3.10-slim
+LABEL AUTHOR="Proyecto Nutria <contact@proyectonutria.com>"
 
 ENV POETRY_VERSION=1.1.14
 # -m makes sure that you're using the pip tied to the active Python executable
