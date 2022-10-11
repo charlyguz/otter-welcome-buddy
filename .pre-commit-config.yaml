@@ -16,7 +16,6 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort
-        args: ["--check", "--profile", "black"]
 
   - repo: https://github.com/PyCQA/flake8
     rev: 5.0.3
@@ -29,7 +28,7 @@ repos:
     rev: v2.14.5
     hooks:
       - id: pylint
-        exclude: tests/
+        exclude: tests/ # Prevent files in tests/ to be passed in to pylint
 
   - repo: https://github.com/AleksaC/hadolint-py
     rev: v1.19.0

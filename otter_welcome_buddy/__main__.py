@@ -2,11 +2,24 @@
 Principal function to be called by Docker
 """
 
+import asyncio
+import os
 
-def main() -> None:
+from common.constants import COMMAND_PREFIX
+from discord.ext.commands import Bot
+from startup import cogs, intents
+
+
+async def main() -> None:
     """Orchestration function"""
-    print("Testing GH")
+    bot: Bot = Bot(
+        command_prefix=COMMAND_PREFIX, intents=intents.get_registered_intents()
+    )
+
+    async with bot:
+        await cogs.register_cogs(bot)
+        await bot.start(os.environ["DISCORD_TOKEN"])
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
