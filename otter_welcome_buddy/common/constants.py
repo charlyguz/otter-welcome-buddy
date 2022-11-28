@@ -1,3 +1,3 @@
-"""This module defines project-level constants."""
+"""Project-level constants"""
 
 COMMAND_PREFIX = "!"

@@ -1,7 +1,3 @@
-"""
-Principal function to be called by Docker
-"""
-
 import asyncio
 import os
 
@@ -11,7 +7,8 @@ from startup import cogs, intents
 
 
 async def main() -> None:
-    """Orchestration function"""
+    """Principal function to be called by Docker"""
+
     bot: Bot = Bot(
         command_prefix=COMMAND_PREFIX, intents=intents.get_registered_intents()
     )

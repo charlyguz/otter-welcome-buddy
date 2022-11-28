@@ -1,6 +1,8 @@
 """Cogs allow to organize a collection of commands, listeners,into one class"""
-from cogs import new_user_joins
+
 from discord.ext.commands import Bot
+
+from otter_welcome_buddy.cogs import new_user_joins
 
 
 def __format_module_path_into_cog_extension(absolute_module_path: str) -> str:
