@@ -26,4 +26,4 @@ async def test_loadExtensions_registerCogs():
     await cogs.register_cogs(mock_bot)
 
     # Assert
-    assert mock_bot.load_extension.call_count == 1
+    assert mock_bot.load_extension.call_count == 2

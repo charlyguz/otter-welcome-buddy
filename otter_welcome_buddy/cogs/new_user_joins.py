@@ -1,14 +1,10 @@
-"""
-When a user joins, sends reactionable message
-"""
 from discord.ext import commands
 
 from otter_welcome_buddy.formatters import debug, messages
 
 
-# We need to create easier test by migrating everything to protected methods
 class Greetings(commands.Cog):
-    """Custom message"""
+    """When a user joins, sends reactionable message"""
 
     def __init__(self, bot, messages_dependency, debug_dependency):
         self.bot = bot

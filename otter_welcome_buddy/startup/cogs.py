@@ -1,8 +1,6 @@
-"""Cogs allow to organize a collection of commands, listeners,into one class"""
-
 from discord.ext.commands import Bot
 
-from otter_welcome_buddy.cogs import new_user_joins
+from otter_welcome_buddy.cogs import hiring_timelines, new_user_joins
 
 
 def __format_module_path_into_cog_extension(absolute_module_path: str) -> str:
@@ -16,6 +14,7 @@ async def register_cogs(bot: Bot) -> None:
     """Registers all the allowed cogs for the bot"""
     allowed_cogs = [
         new_user_joins,
+        hiring_timelines,
     ]
 
     for cog in allowed_cogs:
