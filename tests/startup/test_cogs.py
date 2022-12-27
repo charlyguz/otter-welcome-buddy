@@ -7,13 +7,13 @@ from otter_welcome_buddy.startup import cogs
 
 def test_formatModulePath_cogExtensionFormat():
     # Arrange
-    cog_path = cogs.new_user_joins.__file__
+    cog_path = cogs.hiring_timelines.__file__
 
     # Act
     format_path = cogs.__format_module_path_into_cog_extension(cog_path)
 
     # Assert
-    assert format_path == "otter_welcome_buddy.cogs.new_user_joins"
+    assert format_path == "otter_welcome_buddy.cogs.hiring_timelines"
 
 
 @pytest.mark.asyncio
@@ -26,4 +26,4 @@ async def test_loadExtensions_registerCogs():
     await cogs.register_cogs(mock_bot)
 
     # Assert
-    assert mock_bot.load_extension.call_count == 2
+    assert mock_bot.load_extension.call_count == 1
