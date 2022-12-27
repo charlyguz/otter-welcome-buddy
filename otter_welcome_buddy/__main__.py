@@ -1,9 +1,10 @@
 import asyncio
 import os
 
-from common.constants import COMMAND_PREFIX
 from discord.ext.commands import Bot
-from startup import cogs, intents
+
+from otter_welcome_buddy.common.constants import COMMAND_PREFIX
+from otter_welcome_buddy.startup import cogs, intents
 
 
 async def main() -> None:

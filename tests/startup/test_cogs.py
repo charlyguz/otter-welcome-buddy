@@ -13,7 +13,7 @@ def test_formatModulePath_cogExtensionFormat():
     format_path = cogs.__format_module_path_into_cog_extension(cog_path)
 
     # Assert
-    assert format_path == "cogs.new_user_joins"
+    assert format_path == "otter_welcome_buddy.cogs.new_user_joins"
 
 
 @pytest.mark.asyncio
