@@ -9,7 +9,6 @@ from otter_welcome_buddy.formatters import timeline
 from otter_welcome_buddy.log import wrapper
 
 
-
 class Timelines(commands.Cog):
     """Hiring events for every month"""
 

@@ -3,6 +3,8 @@ name: Push Bot To Dev
 on:
   pull_request:
     branches: [develop]
+  push:
+    branches: [develop]
 
 jobs:
   build-and-deploy:
