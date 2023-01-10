@@ -1,7 +1,7 @@
 name: Push Bot To Dev
 
 on:
-  push:
+  pull_request:
     branches: [develop]
 
 jobs:
