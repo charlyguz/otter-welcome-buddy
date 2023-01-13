@@ -8,7 +8,7 @@ class CronExpressions(Enum):
     DAY_ONE_OF_EACH_MONTH_CRON: str = "0 0 1 * *"
 
 
-COMMAND_PREFIX: str = ">"
+COMMAND_PREFIX: str = "!"
 
 BOT_TIMEZONE: str = "America/Mexico_City"
 
