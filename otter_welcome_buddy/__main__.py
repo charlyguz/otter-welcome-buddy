@@ -20,8 +20,6 @@ def _setup() -> None:
     for path in ALL_DIRS:
         os.makedirs(path, exist_ok=True)
 
-load_dotenv()
-
 
 async def main() -> None:
     """Principal function to be called by Docker"""
