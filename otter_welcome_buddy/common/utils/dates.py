@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from apscheduler.triggers.cron import CronTrigger  # type: ignore
+from apscheduler.triggers.cron import CronTrigger
 
 
 class DateUtils:
