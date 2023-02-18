@@ -78,6 +78,9 @@ You need to install all the prerequisites before following with the instalation 
 You need the following environmental variables either in a `.env` file under the root directory of this repository or directly added at your system (or your Docker instance):
 
 * `DISCORD_TOKEN`: the Discord Bot Token retrieved from the [developer page](https://discord.com/developers/applications).
+
+You can also modify the [settings file](otter_welcome_buddy/settings.py) adding directly some options over there, but if you don't want to, that will also be taken from the `.env` file:
+
 * `WELCOME_MESSAGES`: [`message ids`](https://discordpy.readthedocs.io/en/stable/api.html?highlight=message%20id#discord.Message.id) separated by `,` that give `OTTER_ROLE` when reacted to.
 
 
