@@ -20,12 +20,12 @@ def _setup() -> None:
     for path in ALL_DIRS:
         os.makedirs(path, exist_ok=True)
 
-load_dotenv()
-
 
 async def main() -> None:
     """Principal function to be called by Docker"""
     _setup()
+
+    database.init_database()
 
     bot: Bot = Bot(
         command_prefix=when_mentioned_or(COMMAND_PREFIX),
@@ -33,7 +33,6 @@ async def main() -> None:
     )
 
     async with bot:
-        await database.init_database(bot)
         await cogs.register_cogs(bot)
         await bot.start(os.environ["DISCORD_TOKEN"])
 
