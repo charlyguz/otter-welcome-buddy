@@ -10,15 +10,13 @@ class CronExpressions(Enum):
 
 COMMAND_PREFIX: str = ">"
 
+FONT_PATH: str = "assets/fonts/Inter-Regular.ttf"
+
 DATA_DIR: str = "data"
 DATA_FILE: str = "otter-buddy.db"
 DATA_FILE_PATH: str = os.path.join(DATA_DIR, DATA_FILE)
 
-ALL_DIRS = (
-    attrib_value
-    for attrib_name, attrib_value in list(globals().items())
-    if attrib_name.endswith("DIR")
-)
+ALL_DIRS = (attrib_value for attrib_name, attrib_value in list(globals().items()) if attrib_name.endswith("DIR"))
 
 # Discord role that give access to admin role based commands
 OTTER_ADMIN: str = "ROOT"

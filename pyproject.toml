@@ -11,6 +11,7 @@ APScheduler = "^3.9.1"
 python-dotenv = "^0.21.0"
 SQLAlchemy = "^2.0.8"
 alembic = "^1.10.3"
+Pillow = "^9.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.0"
