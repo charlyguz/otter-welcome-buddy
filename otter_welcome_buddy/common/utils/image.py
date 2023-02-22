@@ -16,7 +16,7 @@ _COLOR_OUTLINE: str = "gray"
 _COLOR_BACKGROUND: str = "white"
 
 
-def get_size(txt: str, font: FreeTypeFont) -> tuple[int, int]:
+def _get_size(txt: str, font: FreeTypeFont) -> tuple[int, int]:
     """
     Get the size (height, width) of the text provided based on the font in píxels
     """
@@ -46,8 +46,8 @@ def create_match_image(
     fontsize: int = 16
     font: FreeTypeFont = ImageFont.truetype(FONT_PATH, fontsize)
 
-    width, height = get_size(first_column, font)
-    width2, _height2 = get_size(second_column, font)
+    width, height = _get_size(first_column, font)
+    width2, _height2 = _get_size(second_column, font)
     img: ImageType = Image.new(
         "RGB",
         ((width + width2) + 100, (height) + 20),

@@ -1,7 +1,6 @@
 from typing import Any
 
-from utils.types.interview_match import InterviewMatchType
-
+from otter_welcome_buddy.common.utils.types.interview_match import InterviewMatchType
 from otter_welcome_buddy.database.db_helpers import delete
 from otter_welcome_buddy.database.db_helpers import dict_factory
 from otter_welcome_buddy.database.db_helpers import fetch_all
@@ -46,7 +45,7 @@ class DbInterviewMatch:
         """Static method to insert (or replace) an interview match record"""
         return insert_one(
             table=DbInterviewMatch.TABLE,
-            columns=interview_match.keys(),
+            columns=list(interview_match.keys()),
             values=tuple(interview_match.values()),
         )
 

@@ -14,10 +14,10 @@ from discord.ext.commands import Context
 from otter_welcome_buddy.common.constants import OTTER_ADMIN
 from otter_welcome_buddy.common.constants import OTTER_MODERATOR
 from otter_welcome_buddy.common.constants import OTTER_ROLE
+from otter_welcome_buddy.common.utils.image import create_match_image
 from otter_welcome_buddy.common.utils.types.common import DiscordChannelType
+from otter_welcome_buddy.common.utils.types.interview_match import InterviewMatchType
 from otter_welcome_buddy.database import db_interview_match
-from otter_welcome_buddy.utils.common import create_match_image
-from otter_welcome_buddy.utils.types.interview_match import InterviewMatchType
 
 
 _DEFAULT_DAY_OF_THE_WEEK: int = 2
