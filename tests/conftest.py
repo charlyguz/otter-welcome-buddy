@@ -82,8 +82,8 @@ def mock_interview_match_model() -> InterviewMatchModel:
         guild=guild,
         author_id=2,
         channel_id=3,
-        day_of_the_week=4,
+        day_of_the_week=0,
         emoji="🤦‍♂",
-        message_id=5,
+        message_id=4,
     )
     return mock_interview_match_model
