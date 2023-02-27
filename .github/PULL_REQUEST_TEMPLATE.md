@@ -1,6 +1,6 @@
 # Description
 
-Please include a summary of the changes and the related issue. 
+Please include a summary of the changes and the related issue.
 
 # Type of change
 
@@ -11,7 +11,7 @@ Please include a summary of the changes and the related issue.
 
 # How Has This Been Tested?
 
-Please describe the tests that you ran to verify your changes. 
+Please describe the tests that you ran to verify your changes.
 
 # Checklist:
 

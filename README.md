@@ -5,7 +5,7 @@
 <div align="center">
   <img src="images/nutria_logo.png">
   <h2 align="center">Otter ... Welcome Buddy</h2>
-  <p align="center">  
+  <p align="center">
     Bot to help the management of Proyecto Nutria's discord
   <br />
   <a href="https://github.com/Proyecto-Nutria/otter-welcome-buddy/issues">Report Bug</a>
@@ -56,7 +56,7 @@ You need to install all the prerequisites before following with the instalation 
 1. [Docker](https://docs.docker.com/get-docker/)
 
 ### Installation
-1. Install our precommits configuration 
+1. Install our precommits configuration
    ```sh
    pre-commit install
    ```
@@ -72,6 +72,14 @@ You need to install all the prerequisites before following with the instalation 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
+<!-- CONFIGURATION INSTRUCTIONS -->
+## Configuration
+
+You need the following environmental variables either in a `.env` file under the root directory of this repository or directly added at your system (or your Docker instance):
+
+* `DISCORD_TOKEN`: the Discord Bot Token retrieved from the [developer page](https://discord.com/developers/applications).
+
+
 <!-- USAGE EXAMPLES -->
 ## Usage
 
@@ -79,11 +87,11 @@ You need to install all the prerequisites before following with the instalation 
    ```sh
       poetry shell
    ```
-1. Run the bot using: 
+1. Run the bot using:
    ```sh
     poetry run python otter_welcome_buddy
    ```
-1. If you would like to run the build locally: 
+1. If you would like to run the build locally:
    ```sh
     tox
    ```
@@ -93,7 +101,7 @@ You need to install all the prerequisites before following with the instalation 
 
 - [ ] Link the repository to our project dashboard
 - [ ] Add deepsource
-- [ ] Add vale 
+- [ ] Add vale
 - [ ] Enable logging
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -116,7 +124,7 @@ Don't forget to give the project a star! Thanks again!
 
 
 <!-- ACKNOWLEDGMENTS -->
-## Acknowledgments 
+## Acknowledgments
 
 This README was possible thanks to [Best-README](https://github.com/othneildrew/Best-README-Template)
 
