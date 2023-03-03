@@ -1,5 +1,4 @@
 """An intent allows a bot to subscribe to specific buckets of events"""
-
 from discord import Intents
 
 

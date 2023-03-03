@@ -1,3 +1,5 @@
+from types import ModuleType  # pylint: disable=no-name-in-module
+
 from discord.ext.commands import Bot
 
 from otter_welcome_buddy.cogs import hiring_timelines  # , new_user_joins
@@ -12,12 +14,15 @@ def __format_module_path_into_cog_extension(absolute_module_path: str) -> str:
 
 async def register_cogs(bot: Bot) -> None:
     """Registers all the allowed cogs for the bot"""
-    allowed_cogs = [
+    allowed_cogs: list[ModuleType] = [
         # new_user_joins,
         hiring_timelines,
     ]
 
     for cog in allowed_cogs:
         # __file__ stores absolute path
-        cog_extension = __format_module_path_into_cog_extension(cog.__file__)
-        await bot.load_extension(cog_extension)
+        if cog.__file__ is None:
+            print("Module doesn't have file path")
+        else:
+            cog_extension: str = __format_module_path_into_cog_extension(cog.__file__)
+            await bot.load_extension(cog_extension)

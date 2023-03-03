@@ -1,37 +1,79 @@
+default_language_version:
+  # force all unspecified python hooks to run python3
+  python: python3
+
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.1
     hooks:
+    - id: pyupgrade
+      args: [--py310-plus]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      # simply checks whether the files parse as valid python
+      - id: check-ast
+      # checks toml files for parseable syntax
       - id: check-toml
+      # checks yaml files for parseable syntax
       - id: check-yaml
+      #  checks a common error of defining a docstring after code
+      - id: check-docstring-first
+      # ensures that (non-binary) executables have a shebang
+      - id: check-executables-have-shebangs
+      # ensures that (non-binary) files with a shebang are executable
+      - id: check-shebang-scripts-are-executable
+      # checks for files that contain merge conflict strings
+      - id: check-merge-conflict
+      #  ensures that links to vcs websites are permalinks (i.e. commit hash instead of master)
+      - id: check-vcs-permalinks
+      # trims trailing whitespace
+      - id: trailing-whitespace
+      # ensures that a file is either empty, or ends with one newline
       - id: end-of-file-fixer
+      #  replaces or checks mixed line ending
       - id: mixed-line-ending
 
+  - repo: https://github.com/asottile/reorder_python_imports
+    rev: v3.9.0
+    hooks:
+      - id: reorder-python-imports
+        args: [--py310-plus]
+
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.4.0
+    hooks:
+      - id: add-trailing-comma
+        args: [--py36-plus]
+
   - repo: https://github.com/psf/black
-    rev: 22.6.0
+    rev: 23.1.0
     hooks:
       - id: black
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.10.1
-    hooks:
-      - id: isort
-        args: ["--profile", "black"]
-
   - repo: https://github.com/PyCQA/flake8
-    rev: 5.0.3
+    rev: 6.0.0
     hooks:
       - id: flake8
         additional_dependencies: [mccabe]
-        args: ["--max-line-length", "88", "--max-complexity", "10"]
 
   - repo: https://github.com/PyCQA/pylint/
-    rev: v2.14.5
+    rev: v2.16.1
     hooks:
       - id: pylint
         exclude: tests/ # Prevent files in tests/ to be passed in to pylint
 
   - repo: https://github.com/AleksaC/hadolint-py
-    rev: v1.19.0
+    rev: v2.12.0.2
     hooks:
       - id: hadolint
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.0.0
+    hooks:
+      - id: mypy
+        exclude: ^tests/
+        additional_dependencies:
+          - APScheduler==3.9.1
+          - discord.py==2.0.1

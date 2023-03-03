@@ -31,9 +31,7 @@ def test_winterInternshipHiringTimeline():
 
 
 def test_noSeasionHiringTimeline():
-    no_season_message = (
-        "Internship application opened for: Not this month, try next one 🦦"
-    )
+    no_season_message = "Internship application opened for: Not this month, try next one 🦦"
     assert Formatter.get_hiring_events_for(2) == no_season_message
     assert Formatter.get_hiring_events_for(3) == no_season_message
     assert Formatter.get_hiring_events_for(6) == no_season_message
