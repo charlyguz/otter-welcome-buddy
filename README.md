@@ -81,7 +81,7 @@ You need the following environmental variables either in a `.env` file under the
 * `WELCOME_MESSAGES`: [`message ids`](https://discordpy.readthedocs.io/en/stable/api.html?highlight=message%20id#discord.Message.id) separated by `,` that give `OTTER_ROLE` when reacted to.
 * `OTTER_ADMIN`: Discord role that give access to admin role based commands.
 * `OTTER_MODERATOR`: Discord role that give access to moderator role based commands.
-* `OTTER_ROLE`: Discord role that give access to the remaining channels and is given when reacted to `WELCOME_MESSAGES`.
+* `OTTER_ROLE`: Discord role to give when reacted to `WELCOME_MESSAGES`.
 
 You can also modify the [settings file](otter_welcome_buddy/settings.py) adding directly some options over there, but if you don't want to, that will also be taken from the `.env` file:
 
