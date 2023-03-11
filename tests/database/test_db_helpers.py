@@ -1,5 +1,4 @@
 import os
-import sqlite3
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -23,8 +22,11 @@ class TestDbHelpers(unittest.TestCase):
             "col_4": 4,
         }
 
-        query = f"""CREATE TABLE IF NOT EXISTS {_TEST_TABLE_NAME}(col_1 integer, col_2 integer, col_3 integer, col_4 integer)"""
-        
+        query = f"""
+            CREATE TABLE IF NOT EXISTS {_TEST_TABLE_NAME}
+            (col_1 integer, col_2 integer, col_3 integer, col_4 integer)
+        """
+
         with DbContext(Path(_TEST_DB)) as conn:
             if conn.connection is None or conn.cursor is None:
                 raise ConnectionError("The connection to the database is not open")
