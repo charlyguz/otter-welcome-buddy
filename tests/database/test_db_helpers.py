@@ -24,7 +24,7 @@ class TestDbHelpers(unittest.TestCase):
         }
 
         query = f"""CREATE TABLE IF NOT EXISTS {_TEST_TABLE_NAME}(col_1 integer, col_2 integer, col_3 integer, col_4 integer)"""
-        print(query)
+        
         with DbContext(Path(_TEST_DB)) as conn:
             if conn.connection is None or conn.cursor is None:
                 raise ConnectionError("The connection to the database is not open")
@@ -53,9 +53,7 @@ class TestDbHelpers(unittest.TestCase):
         # Arrange
         mocked_columns = list(self.values.keys())
         mocked_value = tuple(self.values.values())
-        print(mocked_value)
         mocked_values = list((mocked_value,) * 3)
-        print(mocked_values)
 
         # Act
         result: int = insert_many(

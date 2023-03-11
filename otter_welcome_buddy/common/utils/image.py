@@ -1,6 +1,5 @@
 import os
 
-from common.constants import FONT_PATH
 from discord import Member
 from discord import User
 from PIL import Image
@@ -9,6 +8,8 @@ from PIL import ImageFont
 from PIL.Image import Image as ImageType
 from PIL.ImageDraw import ImageDraw as ImageDrawType
 from PIL.ImageFont import FreeTypeFont
+
+from otter_welcome_buddy.common.constants import FONT_PATH
 
 _IMAGE_PATH: str = os.path.dirname(os.path.realpath(__file__)) + "/image.jpg"
 _COLOR_TEXT: str = "black"
