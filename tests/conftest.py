@@ -1,13 +1,36 @@
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
+from unittest.mock import Mock
 
 import pytest
+from discord import Guild
+from discord import Member
+from discord import Role
+from discord.ext.commands import Bot
 
 
 @pytest.fixture
-def mock_bot():
+def mock_bot() -> Bot:
     mock_bot = AsyncMock()
     return mock_bot
+
+
+@pytest.fixture
+def mock_guild() -> Guild:
+    mock_guild = Mock()
+    return mock_guild
+
+
+@pytest.fixture
+def mock_member() -> Member:
+    mock_member = Mock()
+    return mock_member
+
+
+@pytest.fixture
+def mock_role() -> Role:
+    mock_role = Mock()
+    return mock_role
 
 
 @pytest.fixture

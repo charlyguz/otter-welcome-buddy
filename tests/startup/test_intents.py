@@ -8,3 +8,4 @@ def test_getRegisteredIntents_messageNMembers():
     # Assert
     assert registered_intents.messages is True
     assert registered_intents.members is True
+    assert registered_intents.reactions is True

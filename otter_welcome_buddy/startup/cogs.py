@@ -2,7 +2,8 @@ from types import ModuleType  # pylint: disable=no-name-in-module
 
 from discord.ext.commands import Bot
 
-from otter_welcome_buddy.cogs import hiring_timelines  # , new_user_joins
+from otter_welcome_buddy.cogs import hiring_timelines
+from otter_welcome_buddy.cogs import new_user_joins
 
 
 def __format_module_path_into_cog_extension(absolute_module_path: str) -> str:
@@ -15,7 +16,7 @@ def __format_module_path_into_cog_extension(absolute_module_path: str) -> str:
 async def register_cogs(bot: Bot) -> None:
     """Registers all the allowed cogs for the bot"""
     allowed_cogs: list[ModuleType] = [
-        # new_user_joins,
+        new_user_joins,
         hiring_timelines,
     ]
 

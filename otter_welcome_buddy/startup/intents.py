@@ -8,4 +8,5 @@ def get_registered_intents() -> Intents:
     intents: Intents = Intents.default()
     intents.message_content = True  # Send DMs
     intents.members = True  # Detect new members
+    intents.reactions = True  # Process reactions
     return intents
