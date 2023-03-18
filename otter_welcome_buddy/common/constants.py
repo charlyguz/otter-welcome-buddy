@@ -10,6 +10,8 @@ class CronExpressions(Enum):
 
 COMMAND_PREFIX: str = ">"
 
+BOT_TIMEZONE: str = "America/Mexico_City"
+
 FONT_PATH: str = "assets/fonts/Inter-Regular.ttf"
 
 DATA_DIR: str = "data"

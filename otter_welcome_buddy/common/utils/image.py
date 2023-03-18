@@ -11,7 +11,7 @@ from PIL.ImageFont import FreeTypeFont
 
 from otter_welcome_buddy.common.constants import FONT_PATH
 
-_IMAGE_PATH: str = os.path.dirname(os.path.realpath(__file__)) + "/image.jpg"
+_DEFAULT_IMAGE_PATH: str = os.path.dirname(os.path.realpath(__file__)) + "/image.jpg"
 _COLOR_TEXT: str = "black"
 _COLOR_OUTLINE: str = "gray"
 _COLOR_BACKGROUND: str = "white"
@@ -23,8 +23,7 @@ def _get_size(txt: str, font: FreeTypeFont) -> tuple[int, int]:
     """
     test_img: ImageType = Image.new("RGB", (1, 1))
     test_draw: ImageDrawType = ImageDraw.Draw(test_img)
-    size: tuple[int, int] = test_draw.textsize(txt, font)
-    return size
+    return test_draw.textsize(txt, font)
 
 
 def create_match_image(
@@ -63,6 +62,6 @@ def create_match_image(
         outline=_COLOR_OUTLINE,
     )
 
-    img.save(_IMAGE_PATH)
+    img.save(_DEFAULT_IMAGE_PATH)
 
-    return img, _IMAGE_PATH
+    return img, _DEFAULT_IMAGE_PATH

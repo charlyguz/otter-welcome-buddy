@@ -11,7 +11,7 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.ext.commands import Context
 
-from otter_welcome_buddy.common.constants import OTTER_ADMIN
+from otter_welcome_buddy.common.constants import BOT_TIMEZONE, OTTER_ADMIN
 from otter_welcome_buddy.common.constants import OTTER_MODERATOR
 from otter_welcome_buddy.common.constants import OTTER_ROLE
 from otter_welcome_buddy.common.utils.image import create_match_image
@@ -20,6 +20,7 @@ from otter_welcome_buddy.common.utils.types.interview_match import InterviewMatc
 from otter_welcome_buddy.database import db_interview_match
 
 
+_CRONJOB_HOUR: int = 12
 _DEFAULT_DAY_OF_THE_WEEK: int = 2
 
 
@@ -47,12 +48,12 @@ class InterviewMatch(commands.Cog):
 
         self.scheduler.add_job(
             self._send_weekly_message,
-            CronTrigger(hour=12, timezone="America/Mexico_City"),
+            CronTrigger(hour=_CRONJOB_HOUR, timezone=BOT_TIMEZONE),
             misfire_grace_time=None,
         )
         self.scheduler.add_job(
             self._check_weekly_message,
-            CronTrigger(hour=12, timezone="America/Mexico_City"),
+            CronTrigger(hour=_CRONJOB_HOUR, timezone=BOT_TIMEZONE),
             misfire_grace_time=None,
         )
         self.scheduler.start()
