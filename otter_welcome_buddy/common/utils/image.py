@@ -21,9 +21,10 @@ def _get_size(txt: str, font: FreeTypeFont) -> tuple[int, int]:
     """
     Get the size (height, width) of the text provided based on the font in píxels
     """
-    test_img: ImageType = Image.new("RGB", (1, 1))
-    test_draw: ImageDrawType = ImageDraw.Draw(test_img)
-    return test_draw.textsize(txt, font)
+    temp_img: ImageType = Image.new("RGB", (1, 1))
+    temp_draw: ImageDrawType = ImageDraw.Draw(temp_img)
+    _, _, text_width, text_height = temp_draw.textbbox((0, 0), txt, font)
+    return text_width, text_height
 
 
 def create_match_image(

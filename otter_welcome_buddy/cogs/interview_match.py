@@ -11,13 +11,15 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.ext.commands import Context
 
-from otter_welcome_buddy.common.constants import BOT_TIMEZONE, OTTER_ADMIN
+from otter_welcome_buddy.common.constants import BOT_TIMEZONE
+from otter_welcome_buddy.common.constants import OTTER_ADMIN
 from otter_welcome_buddy.common.constants import OTTER_MODERATOR
 from otter_welcome_buddy.common.constants import OTTER_ROLE
 from otter_welcome_buddy.common.utils.image import create_match_image
 from otter_welcome_buddy.common.utils.types.common import DiscordChannelType
-from otter_welcome_buddy.common.utils.types.interview_match import InterviewMatchType
-from otter_welcome_buddy.database import db_interview_match
+from otter_welcome_buddy.database.db_interview_match import DbInterviewMatch
+from otter_welcome_buddy.database.dbconn import session_scope
+from otter_welcome_buddy.database.models.interview_match_model import InterviewMatchModel
 
 
 _CRONJOB_HOUR: int = 12
@@ -33,6 +35,29 @@ class InterviewMatch(commands.Cog):
         interview_match run send:           Admin command to trigger the send weekly message job
         interview_match run check:          Admin command to trigger the check weekly message job
     """
+
+    _ACTIVITY_MESSAGE: str = (
+        "{role_to_mention}\n"
+        "Hello my beloved otters, it is time to practice!\n"
+        "React to this message with {emoji} if you"
+        " want to make a mock interview with another otter.\n"
+        "Remember you only have 24 hours to react. A nice week "
+        "to all of you and keep coding!"
+    )
+
+    _NOTIFICATION_MESSAGE: str = (
+        "These are the pairs of the week.\n" "Please get in touch with your partner!"
+    )
+
+    _PRIVATE_MESSAGE: str = (
+        "Hello {username_one}!\n"
+        "You have been paired with {username_two}. Please get in contact with "
+        "her/him and don't forget to request the resume!.\n"
+        "*Have fun!*\n\n"
+        "Check this message for more information about the activity:\n"
+        "https://discord.com/channels/742890088190574634/"
+        "743138942035034164/859236992403374110"
+    )
 
     def __init__(self, bot: Bot) -> None:
         """
@@ -74,48 +99,44 @@ class InterviewMatch(commands.Cog):
         if any, send it and store the message id on the database
         """
         weekday: int = datetime.datetime.today().weekday()
-        for entry in db_interview_match.DbInterviewMatch.get_day_interview_matches(
-            weekday,
-        ):
-            entry["guild_id"] = int(entry["guild_id"])
-            guild: discord.Guild | None = None
-            role: discord.Role | None = None
-            try:
-                guild = next(guild for guild in self.bot.guilds if guild.id == entry["guild_id"])
-                role = discord.utils.get(guild.roles, name=OTTER_ROLE)
-                if role is None:
-                    print(f"Not role found in {__name__} for guild {guild.name}")
-            except StopIteration:
-                print(f"Not guild found in {__name__}")
-            finally:
-                interview_buddy_message: str = (
-                    f'{role.mention if role is not None else ""}\n'
-                    "Hello my beloved otters, it is time to practice!\n"
-                    f'React to this message with {entry["emoji"]} if you'
-                    " want to make a mock interview with another otter.\n"
-                    "Remeber you only have 24 hours to react. A nice week "
-                    "to all of you and keep coding!"
-                )
-                channel: DiscordChannelType | None = self.bot.get_channel(
-                    int(entry["channel_id"]),
-                )
-                if channel is None:
-                    print("Fail getting the channel to send the weekly message")
-                if not isinstance(channel, discord.TextChannel):
-                    raise TypeError("Not valid channel to send the message in")
-
-                message: discord.Message = await channel.send(
-                    interview_buddy_message,
-                )
-                await message.add_reaction(entry["emoji"])
-                entry["message_id"] = message.id
+        with session_scope() as session:
+            for entry in DbInterviewMatch.get_day_interview_matches(
+                weekday=weekday,
+                session=session,
+            ):
+                guild: discord.Guild | None = None
+                role: discord.Role | None = None
                 try:
-                    db_interview_match.DbInterviewMatch.update_interview_match(
-                        entry,
+                    guild = next(guild for guild in self.bot.guilds if guild.id == entry.guild_id)
+                    role = discord.utils.get(guild.roles, name=OTTER_ROLE)
+                    if role is None:
+                        print(f"Not role found in {__name__} for guild {guild.name}")
+                except StopIteration:
+                    print(f"Not guild found in {__name__}")
+                finally:
+                    interview_buddy_message: str = self._ACTIVITY_MESSAGE.format(
+                        role_to_mention=role.mention if role is not None else "",
+                        emoji=entry.emoji,
                     )
-                except ProgrammingError:
-                    print("Fail updating the entry on the database")
-                    traceback.print_exc()
+                    channel: DiscordChannelType | None = self.bot.get_channel(entry.channel_id)
+                    if channel is None:
+                        print("Fail getting the channel to send the weekly message")
+                    if not isinstance(channel, discord.TextChannel):
+                        raise TypeError("Not valid channel to send the message in")
+
+                    message: discord.Message = await channel.send(
+                        interview_buddy_message,
+                    )
+                    await message.add_reaction(entry.emoji)
+                    entry.message_id = message.id
+                    try:
+                        DbInterviewMatch.upsert_interview_match(
+                            interview_match_model=entry,
+                            session=session,
+                        )
+                    except Exception:
+                        print("Fail updating the entry on the database")
+                        traceback.print_exc()
 
     async def _process_weekly_message(
         self,
@@ -151,7 +172,7 @@ class InterviewMatch(commands.Cog):
             users_mentions: str = ",".join(
                 list(map(lambda user: f"{user.mention}", week_otter_pool)),
             )
-            message: str = "These are the pairs of the week.\n" "Please get in touch with your partner!"
+            message: str = self._NOTIFICATION_MESSAGE
             message += f"\n{users_mentions}"
             await channel.send(message, file=discord.File(img_path))
 
@@ -173,39 +194,40 @@ class InterviewMatch(commands.Cog):
         weekday = (datetime.datetime.today().weekday() - 1 + 7) % 7 if weekday is None else weekday
 
         try:
-            for entry in db_interview_match.DbInterviewMatch.get_day_interview_matches(
-                weekday,
-            ):
-                fetched_values: tuple | None = await self._get_weekly_message(
-                    channel_id=int(entry["channel_id"]),
-                    message_id=int(entry["message_id"]),
-                    author_id=int(entry["author_id"]),
-                )
-                if fetched_values is None:
-                    return
-                channel: discord.TextChannel
-                cache_message: discord.Message
-                placeholder: discord.Member
-                channel, cache_message, placeholder = fetched_values
+            with session_scope() as session:
+                for entry in DbInterviewMatch.get_day_interview_matches(
+                    weekday=weekday,
+                    session=session,
+                ):
+                    fetched_values: tuple | None = await self._get_weekly_message(
+                        channel_id=entry.channel_id,
+                        message_id=entry.message_id,
+                        author_id=entry.author_id,
+                    )
+                    if fetched_values is None:
+                        return
+                    channel: discord.TextChannel
+                    cache_message: discord.Message
+                    placeholder: discord.Member
+                    channel, cache_message, placeholder = fetched_values
 
-                week_otter_pool: list[discord.Member | discord.User] = await self._get_weekly_pool(
-                    message=cache_message,
-                    emoji=entry["emoji"],
-                )
-                if not week_otter_pool:
-                    await channel.send("No one wanted to practice 😟")
-                    print("Empty pool for Interview Match")
-                    continue
+                    week_otter_pool: list[
+                        discord.Member | discord.User
+                    ] = await self._get_weekly_pool(
+                        message=cache_message,
+                        emoji=entry.emoji,
+                    )
+                    if not week_otter_pool:
+                        await channel.send("No one wanted to practice 😟")
+                        print("Empty pool for Interview Match")
+                        continue
 
-                await self._process_weekly_message(
-                    channel=channel,
-                    week_otter_pool=week_otter_pool,
-                    placeholder=placeholder,
-                )
+                    await self._process_weekly_message(
+                        channel=channel,
+                        week_otter_pool=week_otter_pool,
+                        placeholder=placeholder,
+                    )
 
-        except ProgrammingError:
-            print("Error while getting from database")
-            traceback.print_exc()
         except Exception as ex:
             print(f"Exception {ex} in {__name__}")
             traceback.print_exc()
@@ -273,14 +295,9 @@ class InterviewMatch(commands.Cog):
         """
         username_one: str = f"{otter_one.name}#{otter_one.discriminator}"
         username_two: str = f"{otter_two.name}#{otter_two.discriminator}"
-        message: str = (
-            f"Hello {username_one}!\n"
-            f"You have been paired with {username_two}. Please get in contact with "
-            "her/him and don't forget to request the resume!.\n"
-            "*Have fun!*\n\n"
-            "Check this message for more information about the activity:\n"
-            "https://discord.com/channels/742890088190574634/"
-            "743138942035034164/859236992403374110"
+        message: str = self._PRIVATE_MESSAGE.format(
+            username_one=username_one,
+            username_two=username_two,
         )
         try:
             await otter_one.send(message)
@@ -356,17 +373,21 @@ class InterviewMatch(commands.Cog):
         except asyncio.TimeoutError:
             print("User not reacted to interview_match start")
 
-        interview_match: InterviewMatchType = {
-            "emoji": emoji_selected,  # type: ignore
-            "day_of_the_week": day_of_week % 7,
-            "channel_id": channel.id,
-            "message_id": None,
-            "author_id": ctx.author.id,
-            "guild_id": ctx.guild.id,
-        }
+        interview_match_model = InterviewMatchModel(
+            guild_id=ctx.guild.id,
+            author_id=ctx.author.id,
+            channel_id=channel.id,
+            day_of_the_week=day_of_week % 7,
+            emoji=emoji_selected,
+            message_id=None,
+        )
 
         try:
-            db_interview_match.DbInterviewMatch.insert_interview_match(interview_match)
+            with session_scope() as session:
+                DbInterviewMatch.upsert_interview_match(
+                    interview_match_model=interview_match_model,
+                    session=session,
+                )
             await ctx.send(
                 f"**Interview Match** activity scheduled! See you there {emoji_selected}.",
             )
@@ -390,14 +411,17 @@ class InterviewMatch(commands.Cog):
             if ctx.guild is None:
                 print("No guild on context")
                 return
-            result: int = db_interview_match.DbInterviewMatch.delete_interview_match(
-                ctx.guild.id,
-            )
-            msg: str = ""
-            if result == 1:
-                msg = "**Interview Match** activity stopped!"
-            else:
-                msg = "No activity was running! 😱"
+            with session_scope() as session:
+                interview_match_model = DbInterviewMatch.get_interview_match(
+                    guild_id=ctx.guild.id,
+                    session=session,
+                )
+                msg: str = ""
+                if interview_match_model is not None:
+                    DbInterviewMatch.delete_interview_match(guild_id=ctx.guild.id, session=session)
+                    msg = "**Interview Match** activity stopped!"
+                else:
+                    msg = "No activity was running! 😱"
             await ctx.send(msg)
         except ProgrammingError:
             print("Error while deleting from database")

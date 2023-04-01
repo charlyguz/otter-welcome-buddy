@@ -13,6 +13,7 @@ from pytest_mock import MockFixture
 
 from otter_welcome_buddy.cogs import events
 from otter_welcome_buddy.database.db_guild import DbGuild
+from otter_welcome_buddy.database.models.guild_model import GuildModel
 
 if TYPE_CHECKING:
     from discord.types.gateway import MessageReactionAddEvent

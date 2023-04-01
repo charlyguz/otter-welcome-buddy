@@ -10,6 +10,7 @@ from discord import Role
 from discord.ext.commands import Bot
 
 from otter_welcome_buddy.database.models.guild_model import GuildModel
+from otter_welcome_buddy.database.models.interview_match_model import InterviewMatchModel
 
 
 @pytest.fixture
@@ -70,3 +71,19 @@ def mock_guild_model() -> GuildModel:
         id=123,
     )
     return mock_guild_model
+
+
+@pytest.fixture()
+def mock_interview_match_model() -> InterviewMatchModel:
+    guild = MagicMock()
+    guild.id = 1
+    mock_interview_match_model = InterviewMatchModel(
+        guild_id=guild.id,
+        guild=guild,
+        author_id=2,
+        channel_id=3,
+        day_of_the_week=0,
+        emoji="🤦‍♂",
+        message_id=4,
+    )
+    return mock_interview_match_model
