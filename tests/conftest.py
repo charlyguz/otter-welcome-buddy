@@ -1,3 +1,4 @@
+import os
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 from unittest.mock import Mock
@@ -7,6 +8,8 @@ from discord import Guild
 from discord import Member
 from discord import Role
 from discord.ext.commands import Bot
+
+from otter_welcome_buddy.database.models.guild_model import GuildModel
 
 
 @pytest.fixture
@@ -45,3 +48,25 @@ def mock_debug_fmt():
     mock_debug_fmt = MagicMock()
     mock_debug_fmt.welcome_message = MagicMock()
     return mock_debug_fmt
+
+
+@pytest.fixture()
+def mock_database_session():
+    mock_database_session = MagicMock()
+    return mock_database_session
+
+
+@pytest.fixture()
+def temporary_database():
+    db_path = "test.db"
+    yield db_path
+    if os.path.exists(db_path):
+        os.remove(db_path)
+
+
+@pytest.fixture()
+def mock_guild_model() -> GuildModel:
+    mock_guild_model = GuildModel(
+        id=123,
+    )
+    return mock_guild_model
