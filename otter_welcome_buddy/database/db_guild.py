@@ -12,9 +12,7 @@ class DbGuild:
         session: Session,
     ) -> GuildModel | None:
         """Static method to get a guild by its id"""
-        guild_model: GuildModel | None = (
-            session.query(GuildModel).filter_by(id=guild_id).one_or_none()
-        )
+        guild_model: GuildModel | None = session.query(GuildModel).filter_by(id=guild_id).one_or_none()
         return guild_model
 
     @staticmethod

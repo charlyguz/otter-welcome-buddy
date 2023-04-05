@@ -45,9 +45,7 @@ class InterviewMatch(commands.Cog):
         "to all of you and keep coding!"
     )
 
-    _NOTIFICATION_MESSAGE: str = (
-        "These are the pairs of the week.\n" "Please get in touch with your partner!"
-    )
+    _NOTIFICATION_MESSAGE: str = "These are the pairs of the week.\n" "Please get in touch with your partner!"
 
     _PRIVATE_MESSAGE: str = (
         "Hello {username_one}!\n"
@@ -211,9 +209,7 @@ class InterviewMatch(commands.Cog):
                     placeholder: discord.Member
                     channel, cache_message, placeholder = fetched_values
 
-                    week_otter_pool: list[
-                        discord.Member | discord.User
-                    ] = await self._get_weekly_pool(
+                    week_otter_pool: list[discord.Member | discord.User] = await self._get_weekly_pool(
                         message=cache_message,
                         emoji=entry.emoji,
                     )
