@@ -1,3 +1,5 @@
+from alembic.config import Config
+from alembic import command
 from discord.ext.commands import Bot
 
 from otter_welcome_buddy.common.constants import DATA_FILE_PATH
@@ -6,6 +8,9 @@ from otter_welcome_buddy.database.db_guild import DbGuild
 from otter_welcome_buddy.database.dbconn import BaseModel
 from otter_welcome_buddy.database.dbconn import session_scope
 from otter_welcome_buddy.database.models.guild_model import GuildModel
+
+
+_ALEMBIC_CONFIG_FILE = "alembic.ini"
 
 
 def init_guild_table(bot: Bot) -> None:
@@ -17,7 +22,15 @@ def init_guild_table(bot: Bot) -> None:
             DbGuild.insert_guild(guild_model=guild_model, session=session)
 
 
+def _upgrade_database():
+    config = Config(_ALEMBIC_CONFIG_FILE)
+
+    command.upgrade(config, "head")
+
+
 def init_database() -> None:
     """Initialize the database from the existing models"""
     engine = get_engine(db_path=DATA_FILE_PATH)
     BaseModel.metadata.create_all(engine)
+
+    _upgrade_database()
