@@ -21,8 +21,15 @@ class DbGuild:
     def insert_guild(
         guild_model: GuildModel,
         session: Session,
+        override: bool = False,
     ) -> GuildModel:
         """Static method to insert a guild record"""
+        if not override:
+            current_guild_model = DbGuild.get_guild(guild_id=guild_model.id, session=session)
+            if current_guild_model is None:
+                session.add(guild_model)
+                return guild_model
+            return current_guild_model
         guild_model = session.merge(guild_model)
         return guild_model
 

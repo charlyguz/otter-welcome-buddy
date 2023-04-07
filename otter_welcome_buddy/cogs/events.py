@@ -8,6 +8,7 @@ from otter_welcome_buddy.database.dbconn import session_scope
 from otter_welcome_buddy.database.models.guild_model import GuildModel
 from otter_welcome_buddy.formatters import debug
 from otter_welcome_buddy.settings import WELCOME_MESSAGES
+from otter_welcome_buddy.startup.database import init_guild_table
 
 
 class BotEvents(commands.Cog):
@@ -24,22 +25,24 @@ class BotEvents(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self) -> None:
         """Ready Event"""
+        init_guild_table(self.bot)
+
         print(self.debug_formatter.bot_is_ready())
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild) -> None:
         """Event fired when a guild is either created or the bot join into"""
+        print(f"Bot joined into guild {guild.name} [{guild.id}]")
         with session_scope() as session:
-            if DbGuild.get_guild(guild_id=guild.id, session=session) is None:
-                guild_model = GuildModel(id=guild.id)
-                DbGuild.insert_guild(guild_model=guild_model, session=session)
+            guild_model = GuildModel(id=guild.id)
+            DbGuild.insert_guild(guild_model=guild_model, session=session)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild) -> None:
         """Event fired when a guild is deleted or the bot is removed from it"""
+        print(f"Bot removed from guild {guild.name} [{guild.id}]")
         with session_scope() as session:
-            if DbGuild.get_guild(guild_id=guild.id, session=session) is not None:
-                DbGuild.delete_guild(guild_id=guild.id, session=session)
+            DbGuild.delete_guild(guild_id=guild.id, session=session)
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent) -> None:
