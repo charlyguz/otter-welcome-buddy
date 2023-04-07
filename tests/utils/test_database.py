@@ -1,8 +1,10 @@
 from unittest.mock import MagicMock
-from pytest_mock import MockFixture
-from sqlalchemy import Engine
 
-from otter_welcome_buddy.common.utils.database import create_session, get_engine, get_sqlite_connection_string
+from pytest_mock import MockFixture
+
+from otter_welcome_buddy.common.utils.database import create_session
+from otter_welcome_buddy.common.utils.database import get_engine
+from otter_welcome_buddy.common.utils.database import get_sqlite_connection_string
 
 
 def test_get_sqlite_connection_string() -> None:

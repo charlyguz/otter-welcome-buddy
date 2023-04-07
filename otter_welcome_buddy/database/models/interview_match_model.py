@@ -8,6 +8,9 @@ from sqlalchemy.orm import relationship
 from otter_welcome_buddy.database.dbconn import BaseModel
 
 
+_INTERVIEW_MATCH_MODEL_TABLE_NAME = "interview_match"
+
+
 class InterviewMatchModel(BaseModel):
     """A model that represents an interview match activity in the database.
 

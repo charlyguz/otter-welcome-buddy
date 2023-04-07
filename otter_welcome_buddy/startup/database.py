@@ -1,6 +1,7 @@
-from alembic.config import Config
 from alembic import command
+from alembic.config import Config
 from discord.ext.commands import Bot
+from sqlalchemy import Engine
 
 from otter_welcome_buddy.common.constants import DATA_FILE_PATH
 from otter_welcome_buddy.common.utils.database import get_engine
@@ -22,10 +23,12 @@ def init_guild_table(bot: Bot) -> None:
             DbGuild.insert_guild(guild_model=guild_model, session=session)
 
 
-def _upgrade_database():
-    config = Config(_ALEMBIC_CONFIG_FILE)
-
-    command.upgrade(config, "head")
+def _upgrade_database(engine: Engine) -> None:
+    """Upgrade the database to the latest version using Alembic"""
+    alembic_config = Config(_ALEMBIC_CONFIG_FILE)
+    with engine.begin() as connection:
+        alembic_config.attributes["connection"] = connection
+        command.upgrade(alembic_config, "head")
 
 
 def init_database() -> None:
@@ -33,4 +36,4 @@ def init_database() -> None:
     engine = get_engine(db_path=DATA_FILE_PATH)
     BaseModel.metadata.create_all(engine)
 
-    _upgrade_database()
+    _upgrade_database(engine=engine)
