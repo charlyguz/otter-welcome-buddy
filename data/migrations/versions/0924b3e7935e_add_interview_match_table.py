@@ -8,6 +8,8 @@ Create Date: 2023-04-06 21:58:11.711405
 from alembic import op
 import sqlalchemy as sa
 
+from otter_welcome_buddy.database.models.interview_match_model import _INTERVIEW_MATCH_MODEL_TABLE_NAME
+
 
 # revision identifiers, used by Alembic.
 revision = "0924b3e7935e"
@@ -17,17 +19,19 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.create_table(
-        "interview_match",
-        sa.Column("guild_id", sa.BigInteger(), nullable=False),
-        sa.Column("author_id", sa.BigInteger(), nullable=True),
-        sa.Column("channel_id", sa.BigInteger(), nullable=True),
-        sa.Column("day_of_the_week", sa.Integer(), nullable=True),
-        sa.Column("emoji", sa.String(), nullable=True),
-        sa.Column("message_id", sa.BigInteger(), nullable=True),
-        sa.ForeignKeyConstraint(["guild_id"], ["guild.id"], ),
-        sa.PrimaryKeyConstraint("guild_id"),
-    )
+    conn = op.get_bind()
+    if not conn.dialect.has_table(conn, _INTERVIEW_MATCH_MODEL_TABLE_NAME):
+        op.create_table(
+            "interview_match",
+            sa.Column("guild_id", sa.BigInteger(), nullable=False),
+            sa.Column("author_id", sa.BigInteger(), nullable=True),
+            sa.Column("channel_id", sa.BigInteger(), nullable=True),
+            sa.Column("day_of_the_week", sa.Integer(), nullable=True),
+            sa.Column("emoji", sa.String(), nullable=True),
+            sa.Column("message_id", sa.BigInteger(), nullable=True),
+            sa.ForeignKeyConstraint(["guild_id"], ["guild.id"], ),
+            sa.PrimaryKeyConstraint("guild_id"),
+        )
 
 
 def downgrade() -> None:
