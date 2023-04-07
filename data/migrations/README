@@ -1,1 +1,14 @@
-Generic single-database configuration.
+# Alembic Docs
+
+[Alembic](https://alembic.sqlalchemy.org/en/latest/index.html) is a database migrations tool written by the author of [SQLAlchemy](http://www.sqlalchemy.org/) to be used every time that there's an update that will affect the current database.
+If you did an upgrade on the [Database Models](../../otter_welcome_buddy/database/models), you should add a new revision that will be applied when the bot goes online. In order to do that, follow this steps:
+
+1. Do the modifications on the Database Models.
+2. From your shell, run the following command:
+
+```bash
+alembic revision — autogenerate -m "<description_of_your_change>"
+```
+
+1. This will generate a new file under the [versions folder](versions/). Identify that file and open it.
+2. Modify the methods `upgrade()` and `downgrade()` with the proper changes to run the migration. You can use some help like [ChatGPT](https://chat.openai.com/chat) (or similar) giving the previous model and the modifications that you made and ask it to give you the Alembic requirements to run the migration.

@@ -1,6 +1,5 @@
 from sqlalchemy import BigInteger
 from sqlalchemy import Column
-from sqlalchemy.orm import relationship
 
 from otter_welcome_buddy.database.dbconn import BaseModel
 
@@ -19,8 +18,3 @@ class GuildModel(BaseModel):
     __tablename__ = _GUILD_MODEL_TABLE_NAME
 
     id = Column(BigInteger, primary_key=True)
-    interview_match = relationship(
-        "InterviewMatchModel",
-        uselist=False,
-        cascade="all, delete-orphan",
-    )
