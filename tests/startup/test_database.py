@@ -1,13 +1,12 @@
-from typing import Callable
-from unittest.mock import MagicMock, patch
-
-from discord.ext.commands import Bot
+from unittest.mock import MagicMock
+from unittest.mock import patch
 
 from pytest_mock import MockFixture
+
 from otter_welcome_buddy.startup import database
 
 
-@patch('otter_welcome_buddy.startup.database.BaseModel.metadata.create_all')
+@patch("otter_welcome_buddy.startup.database.BaseModel.metadata.create_all")
 def test_initDatabase(mock_create_all: MagicMock, mocker: MockFixture):
     # Arrange
     mock_engine = MagicMock()
