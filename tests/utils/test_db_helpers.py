@@ -2,9 +2,9 @@ from unittest.mock import MagicMock
 
 from pytest_mock import MockFixture
 
-from otter_welcome_buddy.common.utils.database import create_session
-from otter_welcome_buddy.common.utils.database import get_engine
-from otter_welcome_buddy.common.utils.database import get_sqlite_connection_string
+from otter_welcome_buddy.common.utils.db_helpers import create_session
+from otter_welcome_buddy.common.utils.db_helpers import get_engine
+from otter_welcome_buddy.common.utils.db_helpers import get_sqlite_connection_string
 
 
 def test_get_sqlite_connection_string() -> None:
@@ -25,11 +25,11 @@ def test_get_engine(
     mock_engine = MagicMock()
 
     mock_connection_string = mocker.patch(
-        "otter_welcome_buddy.common.utils.database.get_sqlite_connection_string",
+        "otter_welcome_buddy.common.utils.db_helpers.get_sqlite_connection_string",
         return_value="test.db",
     )
     mock_create_engine = mocker.patch(
-        "otter_welcome_buddy.common.utils.database.create_engine",
+        "otter_welcome_buddy.common.utils.db_helpers.create_engine",
         return_value=mock_engine,
     )
 
@@ -49,11 +49,11 @@ def test_create_session(
     mock_session_maker = MagicMock()
 
     mock_get_engine = mocker.patch(
-        "otter_welcome_buddy.common.utils.database.get_engine",
+        "otter_welcome_buddy.common.utils.db_helpers.get_engine",
         return_value=mock_engine,
     )
     mock_sessionmaker = mocker.patch(
-        "otter_welcome_buddy.common.utils.database.sessionmaker",
+        "otter_welcome_buddy.common.utils.db_helpers.sessionmaker",
         return_value=mock_session_maker,
     )
 

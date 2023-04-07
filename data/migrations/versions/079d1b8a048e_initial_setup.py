@@ -1,12 +1,12 @@
 """initial setup
 
 Revision ID: 079d1b8a048e
-Revises: 
+Revises:
 Create Date: 2023-04-06 21:28:09.061276
 
 """
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 
 from otter_welcome_buddy.database.models.guild_model import GuildModel
 

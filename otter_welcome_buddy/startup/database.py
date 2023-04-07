@@ -4,7 +4,7 @@ from discord.ext.commands import Bot
 from sqlalchemy import Engine
 
 from otter_welcome_buddy.common.constants import DATA_FILE_PATH
-from otter_welcome_buddy.common.utils.database import get_engine
+from otter_welcome_buddy.common.utils.db_helpers import get_engine
 from otter_welcome_buddy.database.db_guild import DbGuild
 from otter_welcome_buddy.database.dbconn import BaseModel
 from otter_welcome_buddy.database.dbconn import session_scope

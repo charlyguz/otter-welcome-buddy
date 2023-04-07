@@ -8,6 +8,9 @@ from sqlalchemy.orm import relationship
 from otter_welcome_buddy.database.dbconn import BaseModel
 
 
+_INTERVIEW_MATCH_MODEL_TABLE_NAME = "interview_match"
+
+
 class InterviewMatchModel(BaseModel):
     """A model that represents an interview match activity in the database.
 
@@ -20,7 +23,7 @@ class InterviewMatchModel(BaseModel):
         message_id (int): Identifier of the message that will be processed for the activity
     """
 
-    __tablename__ = "interview_match"
+    __tablename__ = _INTERVIEW_MATCH_MODEL_TABLE_NAME
 
     guild_id = Column(BigInteger, ForeignKey("guild.id"), primary_key=True)
     guild = relationship("GuildModel")

@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import Session
 
 from otter_welcome_buddy.common.constants import DATA_FILE_PATH
-from otter_welcome_buddy.common.utils.database import create_session
+from otter_welcome_buddy.common.utils.db_helpers import create_session
 
 
 BaseModel = declarative_base()

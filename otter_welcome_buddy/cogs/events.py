@@ -4,6 +4,7 @@ from discord.ext.commands import Bot
 
 from otter_welcome_buddy.common.constants import OTTER_ROLE
 from otter_welcome_buddy.database.db_guild import DbGuild
+from otter_welcome_buddy.database.db_interview_match import DbInterviewMatch
 from otter_welcome_buddy.database.dbconn import session_scope
 from otter_welcome_buddy.database.models.guild_model import GuildModel
 from otter_welcome_buddy.formatters import debug
@@ -42,6 +43,7 @@ class BotEvents(commands.Cog):
         """Event fired when a guild is deleted or the bot is removed from it"""
         print(f"Bot removed from guild {guild.name} [{guild.id}]")
         with session_scope() as session:
+            DbInterviewMatch.delete_interview_match(guild_id=guild.id, session=session)
             DbGuild.delete_guild(guild_id=guild.id, session=session)
 
     @commands.Cog.listener()

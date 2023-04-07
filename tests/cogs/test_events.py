@@ -13,7 +13,7 @@ from pytest_mock import MockFixture
 
 from otter_welcome_buddy.cogs import events
 from otter_welcome_buddy.database.db_guild import DbGuild
-from otter_welcome_buddy.database.models.guild_model import GuildModel
+from otter_welcome_buddy.database.db_interview_match import DbInterviewMatch
 
 if TYPE_CHECKING:
     from discord.types.gateway import MessageReactionAddEvent
@@ -132,6 +132,7 @@ async def test_onGuildRemove_deleteDb(
         "otter_welcome_buddy.database.dbconn.create_session",
         return_value=mock_database_session,
     )
+    mock_delete_interview_match = mocker.patch.object(DbInterviewMatch, "delete_interview_match")
     mock_delete_guild = mocker.patch.object(DbGuild, "delete_guild")
 
     # Act
@@ -139,4 +140,5 @@ async def test_onGuildRemove_deleteDb(
 
     # Assert
     mock_session.assert_called_once()
+    mock_delete_interview_match.assert_called_once()
     mock_delete_guild.assert_called_once()
