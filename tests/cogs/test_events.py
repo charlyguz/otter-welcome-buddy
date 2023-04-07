@@ -32,15 +32,22 @@ async def test_cogSetup_registerCommand(mock_bot):
 
 
 @pytest.mark.asyncio
-async def test_onReady_printMessage(mock_bot, mock_debug_fmt):
+async def test_onReady_printMessage(
+    mocker: MockFixture,
+    mock_bot: Bot,
+    mock_debug_fmt,
+):
     # Arrange
     cog = events.BotEvents(mock_bot, mock_debug_fmt)
+    
+    mock_init_guild = mocker.patch("otter_welcome_buddy.cogs.events.init_guild_table")
 
     # Act
     await cog.on_ready()
 
     # Assert
     assert mock_debug_fmt.bot_is_ready.called
+    mock_init_guild.assert_called_once()
 
 
 @pytest.mark.asyncio
@@ -82,15 +89,12 @@ async def test_onRawReactionAdd_addRole(
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("is_new_guild", [True, False])
 async def test_onGuildJoin_insertDb(
     mocker: MockFixture,
     mock_bot: Bot,
     mock_guild: Guild,
     mock_debug_fmt,
     mock_database_session,
-    mock_guild_model: GuildModel,
-    is_new_guild: bool,
 ):
     # Arrange
     mock_guild.id = 111
@@ -101,11 +105,6 @@ async def test_onGuildJoin_insertDb(
         "otter_welcome_buddy.database.dbconn.create_session",
         return_value=mock_database_session,
     )
-    mock_get_guild = mocker.patch.object(
-        DbGuild,
-        "get_guild",
-        return_value=None if is_new_guild else mock_guild_model,
-    )
     mock_insert_guild = mocker.patch.object(DbGuild, "insert_guild")
 
     # Act
@@ -113,40 +112,25 @@ async def test_onGuildJoin_insertDb(
 
     # Assert
     mock_session.assert_called_once()
-    mock_get_guild.assert_called_once_with(
-        guild_id=mock_guild.id,
-        session=mock_database_session,
-    )
-    if is_new_guild:
-        mock_insert_guild.assert_called_once()
-    else:
-        mock_insert_guild.assert_not_called()
+    mock_insert_guild.assert_called_once()
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("is_existing_guild", [True, False])
 async def test_onGuildRemove_deleteDb(
     mocker: MockFixture,
     mock_bot: Bot,
     mock_guild: Guild,
     mock_debug_fmt,
     mock_database_session,
-    mock_guild_model: GuildModel,
-    is_existing_guild: bool,
 ):
     # Arrange
-    mock_guild.id = mock_guild_model.id
+    mock_guild.id = 111
     mock_bot.guilds = [mock_guild]
     cog = events.BotEvents(mock_bot, mock_debug_fmt)
 
     mock_session = mocker.patch(
         "otter_welcome_buddy.database.dbconn.create_session",
         return_value=mock_database_session,
-    )
-    mock_get_guild = mocker.patch.object(
-        DbGuild,
-        "get_guild",
-        return_value=mock_guild_model if is_existing_guild else None,
     )
     mock_delete_guild = mocker.patch.object(DbGuild, "delete_guild")
 
@@ -155,11 +139,4 @@ async def test_onGuildRemove_deleteDb(
 
     # Assert
     mock_session.assert_called_once()
-    mock_get_guild.assert_called_once_with(
-        guild_id=mock_guild_model.id,
-        session=mock_database_session,
-    )
-    if is_existing_guild:
-        mock_delete_guild.assert_called_once()
-    else:
-        mock_delete_guild.assert_not_called()
+    mock_delete_guild.assert_called_once()
