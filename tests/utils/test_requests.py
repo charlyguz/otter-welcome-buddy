@@ -1,10 +1,10 @@
 from typing import Any
+
+import jsonschema
 import pytest
 from pytest_mock import MockFixture
 
-import jsonschema
-
-from otter_welcome_buddy.common.utils.requests import validate_response
+from otter_welcome_buddy.common.utils.http_requests import validate_response
 
 
 @pytest.fixture
@@ -12,11 +12,11 @@ def mock_response() -> dict[str, Any]:
     mock_response = {
         "data": {
             "user": {
-                "id": 123, 
+                "id": 123,
                 "name": "John Smith",
-                "email": "john@email.com"
-            }
-        }
+                "email": "john@email.com",
+            },
+        },
     }
     return mock_response
 
@@ -36,10 +36,10 @@ def mock_schema() -> dict[str, Any]:
                             "name": {"type": "string"},
                         },
                         "required": ["id", "name"],
-                    }
+                    },
                 },
                 "required": ["user"],
-            }
+            },
         },
         "required": ["data"],
     }
@@ -52,7 +52,7 @@ def test_valid_response(mocker: MockFixture, mock_response: dict[str, Any], mock
 
     # Act
     validate_response(mock_response, mock_schema)
-    
+
     # Assert
     mocked_jsonschema_validate.assert_called_once()
 
@@ -67,7 +67,7 @@ def test_invalid_response(mocker: MockFixture, mock_schema: dict[str, Any]) -> N
     # Act
     with pytest.raises(jsonschema.ValidationError) as ex:
         validate_response(mock_response, mock_schema)
-    
+
     # Assert
     mocked_jsonschema_validate.assert_called_once()
     assert ex.value == mock_exception
@@ -83,7 +83,7 @@ def test_invalid_schema(mocker: MockFixture, mock_response: dict[str, Any]) -> N
     # Act
     with pytest.raises(jsonschema.SchemaError) as ex:
         validate_response(mock_response, mock_schema)
-    
+
     # Assert
     mocked_jsonschema_validate.assert_called_once()
     assert ex.value == mock_exception

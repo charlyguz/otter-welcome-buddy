@@ -4,8 +4,11 @@ from typing import Any
 
 import requests
 
-from otter_welcome_buddy.common.utils.requests import validate_response
-from otter_welcome_buddy.common.utils.types.requests import GraphqlDataRequestType
+from otter_welcome_buddy.common.utils.http_requests import validate_response
+from otter_welcome_buddy.common.utils.types.handlers import GraphqlDataRequestType
+
+
+print(requests.__file__)
 
 
 class GraphQLClient:

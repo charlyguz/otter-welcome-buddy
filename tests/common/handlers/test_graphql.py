@@ -1,10 +1,11 @@
 import random
 from typing import Any
 from unittest.mock import MagicMock
-import pytest
 
+import pytest
 import requests
 from pytest_mock import MockFixture
+
 from otter_welcome_buddy.common.handlers.graphql import GraphQLClient
 
 
@@ -23,12 +24,12 @@ def mock_query() -> str:
 @pytest.fixture
 def mock_schema() -> dict[str, Any]:
     mock_schema = {
-        "type": "object", 
+        "type": "object",
         "properties": {
             "my_field": {
-                "type": "string"
-            }
-        }
+                "type": "string",
+            },
+        },
     }
     return mock_schema
 
@@ -37,17 +38,17 @@ def test__sleep(mocker: MockFixture, mock_graphqlclient: GraphQLClient) -> None:
     # Arrange
     mocked_random = mocker.patch.object(random, "uniform", return_value=1)
     mocked_sleep = mocker.patch("otter_welcome_buddy.common.handlers.graphql.sleep")
-    
+
     # Act
     mock_graphqlclient._sleep(1)
-    
+
     # Assert
     mocked_random.assert_called_once_with(0.5, 2)
     mocked_sleep.assert_called_once_with(0.001)
 
 
 def test_make_request_returns_valid_response_data(
-    mocker: MockFixture, 
+    mocker: MockFixture,
     mock_graphqlclient: GraphQLClient,
     mock_query: str,
     mock_schema: dict[str, Any],
@@ -69,7 +70,7 @@ def test_make_request_returns_valid_response_data(
 
 
 def test_make_request_raises_exception_on_failure(
-    mocker: MockFixture, 
+    mocker: MockFixture,
     mock_graphqlclient: GraphQLClient,
     mock_query: str,
     mock_schema: dict[str, Any],
@@ -91,7 +92,7 @@ def test_make_request_raises_exception_on_failure(
 
 
 def test_make_request_returns_none_on_server_error(
-    mocker: MockFixture, 
+    mocker: MockFixture,
     mock_graphqlclient: GraphQLClient,
     mock_query: str,
     mock_schema: dict[str, Any],
