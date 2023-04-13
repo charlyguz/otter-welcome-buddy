@@ -15,6 +15,7 @@ _DEFAULT_IMAGE_PATH: str = os.path.dirname(os.path.realpath(__file__)) + "/image
 _COLOR_TEXT: str = "black"
 _COLOR_OUTLINE: str = "gray"
 _COLOR_BACKGROUND: str = "white"
+_FONT_SIZE: int = 16
 
 
 def _get_size(txt: str, font: FreeTypeFont) -> tuple[int, int]:
@@ -44,8 +45,7 @@ def create_match_image(
     )
 
     # TODO: except image creation errors
-    fontsize: int = 16
-    font: FreeTypeFont = ImageFont.truetype(FONT_PATH, fontsize)
+    font: FreeTypeFont = ImageFont.truetype(FONT_PATH, _FONT_SIZE)
 
     width, height = _get_size(first_column, font)
     width2, _height2 = _get_size(second_column, font)
