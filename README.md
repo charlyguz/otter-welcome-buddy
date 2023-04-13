@@ -121,6 +121,8 @@ Don't forget to give the project a star! Thanks again!
 2. Create your Feature Branch (`git checkout -b feature/amazing-feature`)
 5. Open a Pull Request
 
+When doing changes to the database, please refer to [this doc](data/migrations/README.md) in order to run migrations and don't break the bot.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 

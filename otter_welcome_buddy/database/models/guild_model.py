@@ -4,9 +4,6 @@ from sqlalchemy import Column
 from otter_welcome_buddy.database.dbconn import BaseModel
 
 
-_GUILD_MODEL_TABLE_NAME = "guild"
-
-
 class GuildModel(BaseModel):
     """A model that represents a guild (server) in the database.
 
@@ -15,6 +12,6 @@ class GuildModel(BaseModel):
                     key of the object
     """
 
-    __tablename__ = _GUILD_MODEL_TABLE_NAME
+    __tablename__ = "guild"
 
     id = Column(BigInteger, primary_key=True)
