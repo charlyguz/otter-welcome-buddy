@@ -7,7 +7,7 @@ from otter_welcome_buddy.startup import database
 
 
 @patch("otter_welcome_buddy.startup.database.BaseModel.metadata.create_all")
-def test_initDatabase(mock_create_all: MagicMock, mocker: MockFixture):
+def test_initDatabase(mock_create_all: MagicMock, mocker: MockFixture) -> None:
     # Arrange
     mock_engine = MagicMock()
 

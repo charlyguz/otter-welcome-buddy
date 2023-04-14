@@ -11,19 +11,19 @@ from otter_welcome_buddy.common.handlers.graphql import GraphQLClient
 
 @pytest.fixture
 def mock_graphqlclient() -> GraphQLClient:
-    mock_graphqlclient = GraphQLClient("http://example.com/graphql")
-    return mock_graphqlclient
+    _mock_graphqlclient = GraphQLClient("http://example.com/graphql")
+    return _mock_graphqlclient
 
 
 @pytest.fixture
 def mock_query() -> str:
-    mock_query = "query { my_field }"
-    return mock_query
+    _mock_query = "query { my_field }"
+    return _mock_query
 
 
 @pytest.fixture
 def mock_schema() -> dict[str, Any]:
-    mock_schema = {
+    _mock_schema = {
         "type": "object",
         "properties": {
             "my_field": {
@@ -31,7 +31,7 @@ def mock_schema() -> dict[str, Any]:
             },
         },
     }
-    return mock_schema
+    return _mock_schema
 
 
 def test__sleep(mocker: MockFixture, mock_graphqlclient: GraphQLClient) -> None:

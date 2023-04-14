@@ -9,7 +9,7 @@ from otter_welcome_buddy.common.utils.http_requests import validate_response
 
 @pytest.fixture
 def mock_response() -> dict[str, Any]:
-    mock_response = {
+    _mock_response = {
         "data": {
             "user": {
                 "id": 123,
@@ -18,12 +18,12 @@ def mock_response() -> dict[str, Any]:
             },
         },
     }
-    return mock_response
+    return _mock_response
 
 
 @pytest.fixture
 def mock_schema() -> dict[str, Any]:
-    mock_schema = {
+    _mock_schema = {
         "type": "object",
         "properties": {
             "data": {
@@ -43,7 +43,7 @@ def mock_schema() -> dict[str, Any]:
         },
         "required": ["data"],
     }
-    return mock_schema
+    return _mock_schema
 
 
 def test_valid_response(mocker: MockFixture, mock_response: dict[str, Any], mock_schema: dict[str, Any]) -> None:

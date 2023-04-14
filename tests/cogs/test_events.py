@@ -10,6 +10,7 @@ from discord import RawReactionActionEvent
 from discord import Role
 from discord.ext.commands import Bot
 from pytest_mock import MockFixture
+from sqlalchemy.orm import Session
 
 from otter_welcome_buddy.cogs import events
 from otter_welcome_buddy.database.db_guild import DbGuild
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.asyncio
-async def test_cogSetup_registerCommand(mock_bot):
+async def test_cogSetup_registerCommand(mock_bot) -> None:
     # Arrange
     mock_bot.add_cog = AsyncMock()
 
@@ -36,7 +37,7 @@ async def test_onReady_printMessage(
     mocker: MockFixture,
     mock_bot: Bot,
     mock_debug_fmt,
-):
+) -> None:
     # Arrange
     cog = events.BotEvents(mock_bot, mock_debug_fmt)
 
@@ -59,7 +60,7 @@ async def test_onRawReactionAdd_addRole(
     mock_member: Member,
     mock_role: Role,
     mock_debug_fmt,
-):
+) -> None:
     # Arrange
     mock_guild.id = 111
     mock_bot.guilds = [mock_guild]
@@ -94,8 +95,8 @@ async def test_onGuildJoin_insertDb(
     mock_bot: Bot,
     mock_guild: Guild,
     mock_debug_fmt,
-    mock_database_session,
-):
+    mock_database_session: Session,
+) -> None:
     # Arrange
     mock_guild.id = 111
     mock_bot.guilds = [mock_guild]
@@ -121,8 +122,8 @@ async def test_onGuildRemove_deleteDb(
     mock_bot: Bot,
     mock_guild: Guild,
     mock_debug_fmt,
-    mock_database_session,
-):
+    mock_database_session: Session,
+) -> None:
     # Arrange
     mock_guild.id = 111
     mock_bot.guilds = [mock_guild]

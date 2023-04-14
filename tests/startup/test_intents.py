@@ -1,7 +1,7 @@
 from otter_welcome_buddy.startup import intents
 
 
-def test_getRegisteredIntents_messageNMembers():
+def test_getRegisteredIntents_messageNMembers() -> None:
     # Arrange / Act
     registered_intents = intents.get_registered_intents()
 

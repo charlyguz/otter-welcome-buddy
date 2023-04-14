@@ -5,7 +5,7 @@ from otter_welcome_buddy.common.constants import CronExpressions
 from otter_welcome_buddy.common.utils.dates import DateUtils
 
 
-def test_datetime_returns_integer_month():
+def test_datetime_returns_integer_month() -> None:
     # Act
     current_month = DateUtils.get_current_month()
 
@@ -14,7 +14,7 @@ def test_datetime_returns_integer_month():
     assert isinstance(current_month, int)
 
 
-def test_cron_creation_from_crontab():
+def test_cron_creation_from_crontab() -> None:
     # Arrange
     dec_fixed_date = datetime(2022, 12, 30)
 

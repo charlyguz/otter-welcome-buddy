@@ -1,4 +1,5 @@
 import os
+from collections.abc import Generator
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 from unittest.mock import Mock
@@ -8,6 +9,7 @@ from discord import Guild
 from discord import Member
 from discord import Role
 from discord.ext.commands import Bot
+from sqlalchemy.orm import Session
 
 from otter_welcome_buddy.database.models.guild_model import GuildModel
 from otter_welcome_buddy.database.models.interview_match_model import InterviewMatchModel
@@ -52,13 +54,13 @@ def mock_debug_fmt():
 
 
 @pytest.fixture()
-def mock_database_session():
+def mock_database_session() -> Session:
     mock_database_session = MagicMock()
     return mock_database_session
 
 
 @pytest.fixture()
-def temporary_database():
+def temporary_database() -> Generator[str, None, None]:
     db_path = "test.db"
     yield db_path
     if os.path.exists(db_path):

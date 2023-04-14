@@ -20,7 +20,7 @@ def test_get_sqlite_connection_string() -> None:
 
 def test_get_engine(
     mocker: MockFixture,
-):
+) -> None:
     # Arrange
     mock_engine = MagicMock()
 
@@ -43,7 +43,7 @@ def test_get_engine(
 
 def test_create_session(
     mocker: MockFixture,
-):
+) -> None:
     # Arrange
     mock_engine = MagicMock()
     mock_session_maker = MagicMock()

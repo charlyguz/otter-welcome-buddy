@@ -2,12 +2,13 @@ from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 
 import pytest
+from discord.ext.commands import Bot
 
 from otter_welcome_buddy.cogs import hiring_timelines
 
 
 @pytest.mark.asyncio
-async def test_register_cog(mock_bot):
+async def test_register_cog(mock_bot: Bot) -> None:
     # Arrange
     mock_bot.add_cog = AsyncMock()
 
@@ -18,7 +19,7 @@ async def test_register_cog(mock_bot):
     assert mock_bot.add_cog.called
 
 
-def test_call_formatter(mock_bot):
+def test_call_formatter(mock_bot: Bot) -> None:
     # Arrange
     mock_timeline_fmt = MagicMock()
     mock_timeline_fmt.get_hiring_events_for = MagicMock()
