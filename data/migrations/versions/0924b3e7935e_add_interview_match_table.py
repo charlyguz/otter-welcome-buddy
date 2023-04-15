@@ -8,7 +8,7 @@ Create Date: 2023-04-06 21:58:11.711405
 from alembic import op
 import sqlalchemy as sa
 
-from otter_welcome_buddy.database.models.interview_match_model import _INTERVIEW_MATCH_MODEL_TABLE_NAME
+from otter_welcome_buddy.database.models.interview_match_model import InterviewMatchModel
 
 
 # revision identifiers, used by Alembic.
@@ -20,7 +20,7 @@ depends_on = None
 
 def upgrade() -> None:
     conn = op.get_bind()
-    if not conn.dialect.has_table(conn, _INTERVIEW_MATCH_MODEL_TABLE_NAME):
+    if not conn.dialect.has_table(conn, InterviewMatchModel.__tablename__):
         op.create_table(
             "interview_match",
             sa.Column("guild_id", sa.BigInteger(), nullable=False),
