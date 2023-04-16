@@ -41,16 +41,32 @@ class UserRecentAcSubmissionType(NamedTuple):
     timestamp: str
 
 
-class ProblemSolvedType(NamedTuple):
+class UserProblemsSolvedType(NamedTuple):
+    """Response type received from GraphQL with the information about a user problems solved"""
+
+    allProblems: int
+    hardProblems: int
+    mediumProblems: int
+    easyProblems: int
+
+
+class ProblemInfoType(NamedTuple):
     """Response type received from GraphQL with the problem information"""
 
     titleSlug: str
+    title: str
     questionId: str
+    questionFrontendId: str
     difficulty: str
 
 
-class UserProblemSolvedType(NamedTuple):
-    """Response type received from GraphQL with the information about a user problem"""
+class ProblemsetListType(NamedTuple):
+    """Response type received from GraphQL with the problem information"""
 
-    nProblems: int
-    question: ProblemSolvedType
+    total: int
+    questions: list[ProblemInfoType]
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "ProblemsetListType":
+        """Return a ProblemsetListType built from a dict"""
+        return cls(data["total"], [ProblemInfoType(**item) for item in data["questions"]])

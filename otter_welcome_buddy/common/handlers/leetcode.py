@@ -4,13 +4,16 @@ import requests
 from jsonschema import ValidationError
 
 from otter_welcome_buddy.common.handlers.graphql import GraphQLClient
-from otter_welcome_buddy.common.json_schemas.leetcode_schemas import user_problem_solved_schema
+from otter_welcome_buddy.common.json_schemas.leetcode_schemas import problem_info_schema
+from otter_welcome_buddy.common.json_schemas.leetcode_schemas import problemset_list_schema
+from otter_welcome_buddy.common.json_schemas.leetcode_schemas import user_problems_solved_schema
 from otter_welcome_buddy.common.json_schemas.leetcode_schemas import user_public_profile_schema
 from otter_welcome_buddy.common.json_schemas.leetcode_schemas import (
     user_recent_ac_submissions_schema,
 )
-from otter_welcome_buddy.common.utils.types.handlers import ProblemSolvedType
-from otter_welcome_buddy.common.utils.types.handlers import UserProblemSolvedType
+from otter_welcome_buddy.common.utils.types.handlers import ProblemInfoType
+from otter_welcome_buddy.common.utils.types.handlers import ProblemsetListType
+from otter_welcome_buddy.common.utils.types.handlers import UserProblemsSolvedType
 from otter_welcome_buddy.common.utils.types.handlers import UserPublicProfileType
 from otter_welcome_buddy.common.utils.types.handlers import UserRecentAcSubmissionType
 
@@ -28,7 +31,7 @@ query userPublicProfile($username: String!) {
 }
 """
 
-_USER_RECENT_AC_SUBMISSIONS: str = """
+_USER_RECENT_AC_SUBMISSIONS_QUERY: str = """
 query recentAcSubmissions($username: String!, $limit: Int!) {
   recentAcSubmissionList(username: $username, limit: $limit) {
     id
@@ -38,8 +41,8 @@ query recentAcSubmissions($username: String!, $limit: Int!) {
 }
 """
 
-_USER_PROBLEM_SOLVED: str = """
-query userProblemSolved($username: String!, $titleSlug: String!) {
+_USER_PROBLEMS_SOLVED_QUERY: str = """
+query userProblemSolved($username: String!) {
   matchedUser(username: $username) {
     submitStatsGlobal {
       acSubmissionNum {
@@ -48,11 +51,41 @@ query userProblemSolved($username: String!, $titleSlug: String!) {
       }
     }
   }
+}
+"""
+
+_PROBLEM_INFO_QUERY: str = """
+query userProblemSolved($titleSlug: String!) {
   question(titleSlug: $titleSlug) {
     titleSlug
+    title
     questionId
+    questionFrontendId
     difficulty
   }
+}
+"""
+
+_PROBLEMSET_LIST_QUERY: str = """
+query problemsetQuestionList(
+    $categorySlug: String,
+    $limit: Int,
+    $filters: QuestionListFilterInput
+) {
+    problemsetQuestionList: questionList(
+        categorySlug: $categorySlug
+        limit: $limit
+        filters: $filters
+    ) {
+        total: totalNum
+        questions: data {
+            title
+            titleSlug
+            questionId
+            questionFrontendId
+            difficulty
+        }
+    }
 }
 """
 
@@ -120,7 +153,7 @@ class LeetcodeAPI:
         }
 
         response = self._fetch_request(
-            _USER_RECENT_AC_SUBMISSIONS,
+            _USER_RECENT_AC_SUBMISSIONS_QUERY,
             user_recent_ac_submissions_schema,
             variables,
         )
@@ -130,33 +163,64 @@ class LeetcodeAPI:
 
         return [UserRecentAcSubmissionType(**item) for item in response["recentAcSubmissionList"]]
 
-    def get_user_problem_solved(
+    def get_user_problems_solved(
         self,
         username: str,
-        title_slug: str,
-    ) -> UserProblemSolvedType | None:
+    ) -> UserProblemsSolvedType | None:
         """
-        Get the user count of problems along with the id, title slug and difficulty of a problem.
+        Get the user count of problems along.
         """
         variables: dict[str, Any] = {
             "username": username,
-            "titleSlug": title_slug,
         }
-        response = self._fetch_request(_USER_PROBLEM_SOLVED, user_problem_solved_schema, variables)
+        response = self._fetch_request(_USER_PROBLEMS_SOLVED_QUERY, user_problems_solved_schema, variables)
         if response is None:
             print("No user found")
             return None
 
-        n_problems = list(
-            filter(
-                lambda problem: problem["difficulty"] == "All",
+        solved_problems = dict(
+            map(
+                lambda problemsSolved: (f"{problemsSolved['difficulty'].lower()}Problems", problemsSolved["count"]),
                 response["matchedUser"]["submitStatsGlobal"]["acSubmissionNum"],
             ),
         )
-        if len(n_problems) != 1:
-            print("Error while getting the count of all problems")
-            return None
-        n_problems_all: dict[str, Any] = n_problems[0]
 
-        question = ProblemSolvedType(**response["question"])
-        return UserProblemSolvedType(int(n_problems_all["count"]), question)
+        return UserProblemsSolvedType(**solved_problems)
+
+    def get_problem_info(
+        self,
+        title_slug: str,
+    ) -> ProblemInfoType | None:
+        """
+        Get the information of a problem based on its title_slug.
+        """
+        variables: dict[str, Any] = {
+            "titleSlug": title_slug,
+        }
+        response = self._fetch_request(_PROBLEM_INFO_QUERY, problem_info_schema, variables)
+        if response is None:
+            print("No problem found")
+            return None
+
+        return ProblemInfoType(**response["question"])
+
+    def get_problemset_list(
+        self,
+        limit: int = 5000,
+        category_slug: str = "",
+    ) -> ProblemsetListType | None:
+        """
+        Get the problemset list, can by in general or by its category
+        """
+        variables: dict[str, Any] = {
+            "limit": limit,
+            "categorySlug": category_slug,
+            # Is required for the query, but I don't know what's it
+            "filters": {},
+        }
+        response = self._fetch_request(_PROBLEMSET_LIST_QUERY, problemset_list_schema, variables)
+        if response is None:
+            print("No problems found")
+            return None
+
+        return ProblemsetListType.from_dict(response["problemsetQuestionList"])

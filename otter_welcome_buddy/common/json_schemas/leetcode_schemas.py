@@ -51,9 +51,9 @@ user_recent_ac_submissions_schema: dict[str, Any] = {
     "additionalProperties": False,
 }
 
-user_problem_solved_schema: dict[str, Any] = {
+user_problems_solved_schema: dict[str, Any] = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "UserProblemSolved",
+    "title": "UserProblemsSolved",
     "type": "object",
     "properties": {
         "matchedUser": {
@@ -82,17 +82,62 @@ user_problem_solved_schema: dict[str, Any] = {
             "required": ["submitStatsGlobal"],
             "additionalProperties": False,
         },
+    },
+    "required": ["matchedUser"],
+    "additionalProperties": False,
+}
+
+problem_info_schema: dict[str, Any] = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "ProblemInfo",
+    "type": "object",
+    "properties": {
         "question": {
             "type": "object",
             "properties": {
                 "titleSlug": {"type": "string"},
+                "title": {"type": "string"},
                 "questionId": {"type": "string"},
+                "questionFrontendId": {"type": "string"},
                 "difficulty": {"type": "string"},
             },
-            "required": ["questionId", "difficulty"],
+            "required": ["titleSlug", "title", "questionId", "questionFrontendId", "difficulty"],
             "additionalProperties": False,
         },
     },
-    "required": ["matchedUser", "question"],
+    "required": ["question"],
+    "additionalProperties": False,
+}
+
+problemset_list_schema: dict[str, Any] = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "ProblemsetList",
+    "type": "object",
+    "properties": {
+        "problemsetQuestionList": {
+            "type": "object",
+            "properties": {
+                "total": {"type": "number"},
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "titleSlug": {"type": "string"},
+                            "title": {"type": "string"},
+                            "questionId": {"type": "string"},
+                            "questionFrontendId": {"type": "string"},
+                            "difficulty": {"type": "string"},
+                        },
+                        "required": ["titleSlug", "title", "questionId", "difficulty"],
+                        "additionalProperties": False,
+                    },
+                },
+            },
+            "required": ["total", "questions"],
+            "additionalProperties": False,
+        },
+    },
+    "required": ["problemsetQuestionList"],
     "additionalProperties": False,
 }
