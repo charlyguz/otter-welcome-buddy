@@ -12,7 +12,9 @@ class DbLeetcodeUser:
         session: Session,
     ) -> LeetcodeUserModel | None:
         """Static method to get a leetcode_user by its handle"""
-        leetcode_user_model: LeetcodeUserModel | None = session.query(LeetcodeUserModel).filter_by(handle=handle).one_or_none()
+        leetcode_user_model: LeetcodeUserModel | None = (
+            session.query(LeetcodeUserModel).filter_by(handle=handle).one_or_none()
+        )
         return leetcode_user_model
 
     @staticmethod
@@ -23,7 +25,10 @@ class DbLeetcodeUser:
     ) -> LeetcodeUserModel:
         """Static method to insert a leetcode_user record"""
         if not override:
-            current_leetcode_user_model = DbLeetcodeUser.get_leetcode_user(handle=leetcode_user_model.handle, session=session)
+            current_leetcode_user_model = DbLeetcodeUser.get_leetcode_user(
+                handle=leetcode_user_model.handle,
+                session=session,
+            )
             if current_leetcode_user_model is None:
                 session.add(leetcode_user_model)
                 return leetcode_user_model

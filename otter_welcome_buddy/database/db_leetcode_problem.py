@@ -12,7 +12,9 @@ class DbLeetcodeProblem:
         session: Session,
     ) -> LeetcodeProblemModel | None:
         """Static method to get a leetcode_problem by its question_slug"""
-        leetcode_problem_model: LeetcodeProblemModel | None = session.query(LeetcodeProblemModel).filter_by(question_slug=question_slug).one_or_none()
+        leetcode_problem_model: LeetcodeProblemModel | None = (
+            session.query(LeetcodeProblemModel).filter_by(question_slug=question_slug).one_or_none()
+        )
         return leetcode_problem_model
 
     @staticmethod
@@ -23,7 +25,10 @@ class DbLeetcodeProblem:
     ) -> LeetcodeProblemModel:
         """Static method to insert a leetcode_problem record"""
         if not override:
-            current_leetcode_problem_model = DbLeetcodeProblem.get_leetcode_problem(question_slug=leetcode_problem_model.question_slug, session=session)
+            current_leetcode_problem_model = DbLeetcodeProblem.get_leetcode_problem(
+                question_slug=leetcode_problem_model.question_slug,
+                session=session,
+            )
             if current_leetcode_problem_model is None:
                 session.add(leetcode_problem_model)
                 return leetcode_problem_model
