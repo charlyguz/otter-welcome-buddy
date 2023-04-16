@@ -15,11 +15,12 @@ def test_initDatabase(mock_create_all: MagicMock, mocker: MockFixture):
         "otter_welcome_buddy.startup.database.get_engine",
         return_value=mock_engine,
     )
+    mock_upgrade_database = mocker.patch("otter_welcome_buddy.startup.database._upgrade_database")
 
     # Act
     database.init_database()
 
     # Assert
-    print(type(mock_create_all))
     mock_get_engine.assert_called_once()
     mock_create_all.assert_called_once_with(mock_engine)
+    mock_upgrade_database.assert_called_once()
