@@ -18,5 +18,5 @@ class UserModel(BaseModel):
     __tablename__ = "user"
 
     discord_id = Column(BigInteger, primary_key=True)
-    leetcode_handle = Column(String, ForeignKey('leetcode_user.handle'))
-    leetcode_user = relationship('LeetcodeUserModel')
+    leetcode_handle = Column(String, ForeignKey("leetcode_user.handle"))
+    leetcode_user = relationship("LeetcodeUserModel")
