@@ -16,6 +16,15 @@ class DbUser:
         return user_model
 
     @staticmethod
+    def get_user_by_handle(
+        handle: str,
+        session: Session,
+    ) -> UserModel | None:
+        """Static method to get a user by its discord id"""
+        user_model: UserModel | None = session.query(UserModel).filter_by(leetcode_handle=handle).one_or_none()
+        return user_model
+
+    @staticmethod
     def insert_user(
         user_model: UserModel,
         session: Session,
