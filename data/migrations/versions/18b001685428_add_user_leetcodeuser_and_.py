@@ -8,9 +8,9 @@ Create Date: 2023-04-15 19:30:50.724101
 import sqlalchemy as sa
 from alembic import op
 
-from otter_welcome_buddy.database.models.guild_model import LeetcodeProblemModel
-from otter_welcome_buddy.database.models.guild_model import LeetcodeUserModel
-from otter_welcome_buddy.database.models.guild_model import UserModel
+from otter_welcome_buddy.database.models.leetcode_model import LeetcodeProblemModel
+from otter_welcome_buddy.database.models.leetcode_model import LeetcodeUserModel
+from otter_welcome_buddy.database.models.user_model import UserModel
 
 
 # revision identifiers, used by Alembic.
@@ -21,7 +21,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    if not op.get_bind().has_table(UserModel.__tablename__):
+    conn = op.get_bind()
+    if not conn.dialect.has_table(conn, UserModel.__tablename__):
         op.create_table("user",
             sa.Column("discord_id", sa.BigInteger(), nullable=False),
             sa.Column("leetcode_handle", sa.String(), nullable=True),
@@ -30,7 +31,7 @@ def upgrade() -> None:
             sa.UniqueConstraint("leetcode_handle")
         )
 
-    if not op.get_bind().has_table(LeetcodeUserModel.__tablename__):
+    if not conn.dialect.has_table(conn, LeetcodeUserModel.__tablename__):
         op.create_table("leetcode_user",
             sa.Column("handle", sa.String(), nullable=False),
             sa.Column("rating", sa.Integer(), nullable=True),
@@ -38,7 +39,7 @@ def upgrade() -> None:
             sa.PrimaryKeyConstraint("handle"),
         )
 
-    if not op.get_bind().has_table(LeetcodeProblemModel.__tablename__):
+    if not conn.dialect.has_table(conn, LeetcodeProblemModel.__tablename__):
         op.create_table("leetcode_problem",
             sa.Column("question_slug", sa.String(), nullable=False),
             sa.Column("title", sa.String(), nullable=True),
