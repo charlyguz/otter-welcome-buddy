@@ -38,5 +38,5 @@ class DbGuild:
         guild_id: int,
         session: Session,
     ) -> None:
-        """Static method to delete an interview match record by a guild_id"""
-        session.query(GuildModel).filter_by(guild_id=guild_id).delete()
+        """Static method to delete a guild record by its id"""
+        session.query(GuildModel).filter_by(id=guild_id).delete()
