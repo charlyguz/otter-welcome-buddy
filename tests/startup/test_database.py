@@ -16,6 +16,7 @@ def test_initDatabase(mock_create_all: MagicMock, mocker: MockFixture) -> None:
         return_value=mock_engine,
     )
     mock_upgrade_database = mocker.patch("otter_welcome_buddy.startup.database._upgrade_database")
+    mock_update_lc_problems = mocker.patch("otter_welcome_buddy.startup.database._update_leetcode_problems")
 
     # Act
     database.init_database()
@@ -24,3 +25,4 @@ def test_initDatabase(mock_create_all: MagicMock, mocker: MockFixture) -> None:
     mock_get_engine.assert_called_once()
     mock_create_all.assert_called_once_with(mock_engine)
     mock_upgrade_database.assert_called_once()
+    mock_update_lc_problems.assert_called_once()
