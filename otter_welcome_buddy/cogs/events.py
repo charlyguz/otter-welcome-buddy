@@ -37,6 +37,18 @@ class BotEvents(commands.Cog):
         logger.info(self.debug_formatter.bot_is_ready())
 
     @commands.Cog.listener()
+    async def on_guild_join(self, guild: discord.Guild) -> None:
+        """Event fired when a guild is either created or the bot join into"""
+        if DbGuildHandler.get_guild(guild_id=guild.id) is None:
+            guild_model: GuildModel = GuildModel(id=guild.id)
+            DbGuildHandler.insert_guild(guild_model=guild_model)
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild: discord.Guild) -> None:
+        """Event fired when a guild is deleted or the bot is removed from it"""
+        DbGuildHandler.delete_guild(guild_id=guild.id)
+
+    @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent) -> None:
         """Event fired when a user react to the welcome message, giving the entry role to him"""
         # Check if the user to add the role is valid
