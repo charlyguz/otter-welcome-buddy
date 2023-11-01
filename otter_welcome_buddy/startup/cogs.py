@@ -1,3 +1,4 @@
+import logging
 from types import ModuleType  # pylint: disable=no-name-in-module
 
 from discord.ext.commands import Bot
@@ -5,6 +6,9 @@ from discord.ext.commands import Bot
 from otter_welcome_buddy.cogs import events
 from otter_welcome_buddy.cogs import hiring_timelines
 from otter_welcome_buddy.cogs import new_user_joins
+
+
+logger = logging.getLogger(__name__)
 
 
 def __format_module_path_into_cog_extension(absolute_module_path: str) -> str:
@@ -25,7 +29,7 @@ async def register_cogs(bot: Bot) -> None:
     for cog in allowed_cogs:
         # __file__ stores absolute path
         if cog.__file__ is None:
-            print("Module doesn't have file path")
+            logger.warning("Module doesn't have file path")
         else:
             cog_extension: str = __format_module_path_into_cog_extension(cog.__file__)
             await bot.load_extension(cog_extension)

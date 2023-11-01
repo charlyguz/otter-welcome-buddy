@@ -14,6 +14,10 @@ DATA_DIR: str = "data"
 DATA_FILE: str = "otter-buddy.db"
 DATA_FILE_PATH: str = os.path.join(DATA_DIR, DATA_FILE)
 
+LOG_DIR: str = "logs"
+LOG_FILE: str = "otter-buddy.log"
+LOG_FILE_PATH: str = os.path.join(LOG_DIR, LOG_FILE)
+
 ALL_DIRS = (
     attrib_value
     for attrib_name, attrib_value in list(globals().items())
