@@ -5,6 +5,8 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 
 from otter_welcome_buddy.common.constants import OTTER_ROLE
+from otter_welcome_buddy.database.handlers.db_guild_handler import DbGuildHandler
+from otter_welcome_buddy.database.models.external.guild_model import GuildModel
 from otter_welcome_buddy.formatters import debug
 from otter_welcome_buddy.settings import WELCOME_MESSAGES
 
@@ -26,6 +28,12 @@ class BotEvents(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self) -> None:
         """Ready Event"""
+        # Verify that all the guilds that the bot is part of are in the database
+        for guild in self.bot.guilds:
+            if DbGuildHandler.get_guild(guild_id=guild.id) is None:
+                guild_model: GuildModel = GuildModel(id=guild.id)
+                DbGuildHandler.insert_guild(guild_model=guild_model)
+
         logger.info(self.debug_formatter.bot_is_ready())
 
     @commands.Cog.listener()
