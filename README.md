@@ -79,6 +79,38 @@ You need the following environmental variables either in a `.env` file under the
 
 * `DISCORD_TOKEN`: the Discord Bot Token retrieved from the [developer page](https://discord.com/developers/applications).
 * `WELCOME_MESSAGES`: [`message ids`](https://discordpy.readthedocs.io/en/stable/api.html?highlight=message%20id#discord.Message.id) separated by `,` that give `OTTER_ROLE` when reacted to.
+* `MONGO_URI`: address of the [MongoDB](https://docs.mongodb.com/manual/reference/connection-string/) instance to be used, could be local or [Cluster from Atlas](https://www.mongodb.com/cloud/atlas).
+
+
+<!-- DOCKER INSTRUCTIONS -->
+### Dockerize
+
+If you want to use [`Docker`](https://www.docker.com/), you need to take care of few extra steps.
+
+#### Dependencies
+
+Be sure to have this two technologies installed:
+
+* [Docker Engine](https://docs.docker.com/engine/install/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+
+#### Environment Variables
+
+Add these variables in the "environment" (`.env`) file (additional to the ones required on the [Configuration section](#configuration)).
+
+- **MONGO_ROOT_USERNAME**: username to be created as root user with given credentials to manage MongoDB.
+- **MONGO_ROOT_PASSWORD**: strong password to be used as credentials for `MONGO_ROOT_USERNAME`.
+- **MONGO_USERNAME**: user that manage the connections of the application into the database.
+- **MONGO_PASSWORD**: credentials configured to the user of the application.
+
+> :warning: You can omit **MONGO_URI** because will be configured during the creation.
+
+#### Run
+
+```sh
+# Build and run the bot
+docker-compose up -d
+```
 
 
 <!-- USAGE EXAMPLES -->
