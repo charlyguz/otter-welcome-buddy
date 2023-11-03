@@ -1,0 +1,19 @@
+12-01-2023 20:25:57:WARNING:discord.client:PyNaCl is not installed, voice will NOT be supported
+12-01-2023 20:25:57:INFO:discord.client:logging in using static token
+12-01-2023 20:25:58:INFO:discord.gateway:Shard ID None has connected to Gateway (Session ID: 2683d1e2f40d52535483c3c8c75af3d2).
+12-01-2023 20:27:36:WARNING:discord.client:PyNaCl is not installed, voice will NOT be supported
+12-01-2023 20:27:36:INFO:discord.client:logging in using static token
+12-01-2023 20:27:37:INFO:discord.gateway:Shard ID None has connected to Gateway (Session ID: 211f0eb3dee611e00d0d37b6c49dfb6b).
+12-01-2023 20:29:11:WARNING:discord.client:PyNaCl is not installed, voice will NOT be supported
+12-01-2023 20:29:11:INFO:discord.client:logging in using static token
+12-01-2023 20:29:11:INFO:discord.gateway:Shard ID None has connected to Gateway (Session ID: b52cd26e3bb9904f5845bccce93b36aa).
+12-01-2023 20:30:11:WARNING:discord.client:PyNaCl is not installed, voice will NOT be supported
+12-01-2023 20:30:11:INFO:discord.client:logging in using static token
+12-01-2023 20:30:12:INFO:discord.gateway:Shard ID None has connected to Gateway (Session ID: 1bfcbb00a4721170e0eacbc1cd0f2662).
+12-01-2023 20:31:52:WARNING:discord.client:PyNaCl is not installed, voice will NOT be supported
+12-01-2023 20:31:52:INFO:discord.client:logging in using static token
+12-01-2023 20:31:53:INFO:discord.gateway:Shard ID None has connected to Gateway (Session ID: 8de17740b503128a086517c661f2d7c3).
+12-01-2023 20:32:04:ERROR:discord.ext.commands.bot:Ignoring exception in command None
+discord.ext.commands.errors.CommandNotFound: Command "reactioncheck" is not found
+12-01-2023 20:32:12:ERROR:discord.ext.commands.bot:Ignoring exception in command None
+discord.ext.commands.errors.CommandNotFound: Command "reactioncheck" is not found
