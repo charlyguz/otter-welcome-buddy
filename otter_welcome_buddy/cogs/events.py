@@ -9,6 +9,7 @@ from otter_welcome_buddy.database.handlers.db_guild_handler import DbGuildHandle
 from otter_welcome_buddy.database.models.external.guild_model import GuildModel
 from otter_welcome_buddy.formatters import debug
 from otter_welcome_buddy.settings import WELCOME_MESSAGES
+from otter_welcome_buddy.startup.database import init_guild_table
 
 
 logger = logging.getLogger(__name__)
@@ -28,11 +29,7 @@ class BotEvents(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self) -> None:
         """Ready Event"""
-        # Verify that all the guilds that the bot is part of are in the database
-        for guild in self.bot.guilds:
-            if DbGuildHandler.get_guild(guild_id=guild.id) is None:
-                guild_model: GuildModel = GuildModel(id=guild.id)
-                DbGuildHandler.insert_guild(guild_model=guild_model)
+        init_guild_table(self.bot)
 
         logger.info(self.debug_formatter.bot_is_ready())
 
