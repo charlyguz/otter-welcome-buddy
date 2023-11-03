@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock
+from unittest.mock import MagicMock
 from unittest.mock import patch
 
 import pytest
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.asyncio
-async def test_cogSetup_registerCommand(mock_bot):
+async def test_cogSetup_registerCommand(mock_bot: Bot) -> None:
     # Arrange
     mock_bot.add_cog = AsyncMock()
 
@@ -32,14 +33,20 @@ async def test_cogSetup_registerCommand(mock_bot):
 
 
 @pytest.mark.asyncio
-async def test_onReady_printMessage(mock_bot, mock_debug_fmt):
+async def test_onReady_printMessage(
+    mocker: MockFixture,
+    mock_bot: Bot,
+    mock_debug_fmt: MagicMock,
+) -> None:
     # Arrange
     cog = events.BotEvents(mock_bot, mock_debug_fmt)
+    mock_init_guild = mocker.patch("otter_welcome_buddy.cogs.events.init_guild_table")
 
     # Act
     await cog.on_ready()
 
     # Assert
+    mock_init_guild.assert_called_once()
     assert mock_debug_fmt.bot_is_ready.called
 
 
@@ -51,8 +58,8 @@ async def test_onRawReactionAdd_addRole(
     mock_guild: Guild,
     mock_member: Member,
     mock_role: Role,
-    mock_debug_fmt,
-):
+    mock_debug_fmt: MagicMock,
+) -> None:
     # Arrange
     mock_guild.id = 111
     mock_bot.guilds = [mock_guild]
@@ -87,10 +94,10 @@ async def test_onGuildJoin_insertDb(
     mocker: MockFixture,
     mock_bot: Bot,
     mock_guild: Guild,
-    mock_debug_fmt,
+    mock_debug_fmt: MagicMock,
     mock_guild_model: GuildModel,
     is_new_guild: bool,
-):
+) -> None:
     # Arrange
     mock_guild.id = 111
     mock_bot.guilds = [mock_guild]
@@ -119,9 +126,9 @@ async def test_onGuildRemove_deleteDb(
     mocker: MockFixture,
     mock_bot: Bot,
     mock_guild: Guild,
-    mock_debug_fmt,
+    mock_debug_fmt: MagicMock,
     mock_guild_model: GuildModel,
-):
+) -> None:
     # Arrange
     mock_guild.id = mock_guild_model.id
     mock_bot.guilds = [mock_guild]

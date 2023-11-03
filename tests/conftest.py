@@ -17,46 +17,46 @@ from otter_welcome_buddy.database.models.external.guild_model import GuildModel
 
 @pytest.fixture
 def mock_bot() -> Bot:
-    mock_bot = AsyncMock()
-    return mock_bot
+    mocked_bot = AsyncMock()
+    return mocked_bot
 
 
 @pytest.fixture
 def mock_guild() -> Guild:
-    mock_guild = Mock()
-    return mock_guild
+    mocked_guild = Mock()
+    return mocked_guild
 
 
 @pytest.fixture
 def mock_member() -> Member:
-    mock_member = Mock()
-    return mock_member
+    mocked_member = Mock()
+    return mocked_member
 
 
 @pytest.fixture
 def mock_role() -> Role:
-    mock_role = Mock()
-    return mock_role
+    mocked_role = Mock()
+    return mocked_role
 
 
 @pytest.fixture
 def mock_msg_fmt():
-    mock_msg_fmt = MagicMock()
-    mock_msg_fmt.bot_is_ready = MagicMock()
-    return mock_msg_fmt
+    mocked_msg_fmt = MagicMock()
+    mocked_msg_fmt.bot_is_ready = MagicMock()
+    return mocked_msg_fmt
 
 
 @pytest.fixture
 def mock_debug_fmt():
-    mock_debug_fmt = MagicMock()
-    mock_debug_fmt.welcome_message = MagicMock()
-    return mock_debug_fmt
+    mocked_debug_fmt = MagicMock()
+    mocked_debug_fmt.welcome_message = MagicMock()
+    return mocked_debug_fmt
 
 
 @pytest.fixture()
 def mock_cache_session():
-    mock_cache_session = MagicMock()
-    return mock_cache_session
+    mocked_cache_session = MagicMock()
+    return mocked_cache_session
 
 
 @pytest.fixture()
@@ -80,8 +80,8 @@ def temporary_mongo_connection():
 
 @pytest.fixture()
 def mock_guild_model(temporary_mongo_connection) -> GuildModel:
-    mock_guild_model = GuildModel(
+    mocked_guild_model = GuildModel(
         id=123,
     )
-    mock_guild_model.save()
-    return mock_guild_model
+    mocked_guild_model.save()
+    return mocked_guild_model

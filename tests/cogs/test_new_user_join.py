@@ -1,12 +1,14 @@
 from unittest.mock import AsyncMock
+from unittest.mock import MagicMock
 
 import pytest
+from discord.ext.commands import Bot
 
 from otter_welcome_buddy.cogs import new_user_joins
 
 
 @pytest.mark.asyncio
-async def test_cogSetup_registerCommand(mock_bot):
+async def test_cogSetup_registerCommand(mock_bot: Bot) -> None:
     # Arrange
     mock_bot.add_cog = AsyncMock()
 
@@ -17,7 +19,7 @@ async def test_cogSetup_registerCommand(mock_bot):
     assert mock_bot.add_cog.called
 
 
-def test_commandMessage_correctMessage(mock_bot, mock_msg_fmt):
+def test_commandMessage_correctMessage(mock_bot: Bot, mock_msg_fmt: MagicMock) -> None:
     # Act
     cog = new_user_joins.Greetings(mock_bot, mock_msg_fmt)
     cog._command_message()
