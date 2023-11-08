@@ -9,8 +9,6 @@ from discord import Member
 from discord import Role
 from discord.ext.commands import Bot
 
-from otter_welcome_buddy.database.models.guild_model import GuildModel
-
 
 @pytest.fixture
 def mock_bot() -> Bot:
@@ -51,22 +49,14 @@ def mock_debug_fmt():
 
 
 @pytest.fixture()
-def mock_database_session():
-    mock_database_session = MagicMock()
-    return mock_database_session
+def mock_cache_session():
+    mock_cache_session = MagicMock()
+    return mock_cache_session
 
 
 @pytest.fixture()
-def temporary_database():
+def temporary_cache():
     db_path = "test.db"
     yield db_path
     if os.path.exists(db_path):
         os.remove(db_path)
-
-
-@pytest.fixture()
-def mock_guild_model() -> GuildModel:
-    mock_guild_model = GuildModel(
-        id=123,
-    )
-    return mock_guild_model
