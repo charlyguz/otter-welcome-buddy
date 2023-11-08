@@ -5,7 +5,7 @@ import pytest
 from otter_welcome_buddy.startup import cogs
 
 
-def test_formatModulePath_cogExtensionFormat():
+def test_formatModulePath_cogExtensionFormat() -> None:
     # Arrange
     cog_path = cogs.hiring_timelines.__file__
 
@@ -17,7 +17,7 @@ def test_formatModulePath_cogExtensionFormat():
 
 
 @pytest.mark.asyncio
-async def test_loadExtensions_registerCogs():
+async def test_loadExtensions_registerCogs() -> None:
     # Arrange
     mock_bot = AsyncMock()
     mock_bot.load_extension = AsyncMock()
