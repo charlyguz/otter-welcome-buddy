@@ -51,7 +51,7 @@ async def main() -> None:
     )
 
     async with bot:
-        await database.init_database(bot)
+        await database.init_database()
         await cogs.register_cogs(bot)
         await bot.start(os.environ["DISCORD_TOKEN"])
 
