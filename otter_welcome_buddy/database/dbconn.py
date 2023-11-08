@@ -1,3 +1,4 @@
+import logging
 from contextlib import contextmanager
 
 from sqlalchemy.orm import declarative_base
@@ -6,6 +7,8 @@ from sqlalchemy.orm import Session
 from otter_welcome_buddy.common.constants import DATA_FILE_PATH
 from otter_welcome_buddy.common.utils.database import create_cache_session
 
+
+logger = logging.getLogger(__name__)
 
 BaseModel = declarative_base()
 
@@ -29,7 +32,7 @@ def cache_session_scope(db_path: str = DATA_FILE_PATH) -> Session:
         yield session
         session.commit()
     except Exception as ex:
-        print(f"Error while commiting the database changes: {ex}")
+        logger.error("Error while commiting the database changes: %s", ex)
         session.rollback()
         raise
     finally:
