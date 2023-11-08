@@ -8,6 +8,11 @@ from discord import Guild
 from discord import Member
 from discord import Role
 from discord.ext.commands import Bot
+from mongoengine import connect as mongo_connect
+from mongoengine import disconnect as mongo_disconnect
+from mongomock import MongoClient
+
+from otter_welcome_buddy.database.models.external.guild_model import GuildModel
 
 
 @pytest.fixture
@@ -60,3 +65,23 @@ def temporary_cache():
     yield db_path
     if os.path.exists(db_path):
         os.remove(db_path)
+
+
+@pytest.fixture()
+def temporary_mongo_connection():
+    mock_mongo_connection = mongo_connect(
+        "mongoenginetest",
+        host="mongodb://localhost",
+        mongo_client_class=MongoClient,
+    )
+    yield mock_mongo_connection
+    mongo_disconnect()
+
+
+@pytest.fixture()
+def mock_guild_model(temporary_mongo_connection) -> GuildModel:
+    mock_guild_model = GuildModel(
+        guild_id=123,
+    )
+    mock_guild_model.save()
+    return mock_guild_model
