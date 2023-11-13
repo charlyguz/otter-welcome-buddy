@@ -7,24 +7,6 @@ from discord.ext.commands import Context
 from otter_welcome_buddy.common.constants import OTTER_ADMIN
 from otter_welcome_buddy.common.constants import OTTER_MODERATOR
 
-# 1) añadir temnplate de mensaje, opcional si hay descripcion añadir esa descripcion ✅
-# 2) eliminar editar mensajes de el comando de eliminar roles  ✅
-# 3) en todos los comandos quitar lo de los mensajes y dejar uno por defecto  ✅ revisado
-
-# pasos para correr el bot
-# python -m venv env    1) crear entorno virtual
-# source ./env/Scripts/activate 2) activar entorno virtual
-# pip install poetry   3) instalar poetry
-# poetry install        4) instalar dependencias
-# poetry run python otter_welcome_buddy 5) correr el bot
-# pre-commit run -a    6) correr pre-commit
-
-# cosas por revisar
-# 1) por que no estan funcionando los grupos de comandos ✅
-# 2) por que no puedo correr el bot con poetry run python otter_welcome_buddy
-# 3) mientras no pueda correr poetry no puedo ejecutar prec-commit
-# 4) esta demas el comando de editar mensaje?
-
 
 class NewRoles(commands.Cog):
     """
