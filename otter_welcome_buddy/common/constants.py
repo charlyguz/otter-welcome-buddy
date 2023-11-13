@@ -29,7 +29,7 @@ ALL_DIRS = (
 # Discord role that give access to admin role based commands
 OTTER_ADMIN: str = "ROOT"
 # Discord role that give access to moderator role based commands
-OTTER_MODERATOR: str = "Collaborator"
+OTTER_MODERATOR: str = "FrontEnd"
 # Discord role that give access to the remaining channels and is
 # given when the user react to WELCOME_MESSAGES
 OTTER_ROLE: str = "Interviewee"
