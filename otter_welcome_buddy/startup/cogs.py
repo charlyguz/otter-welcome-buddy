@@ -6,6 +6,7 @@ from discord.ext.commands import Bot
 from otter_welcome_buddy.cogs import events
 from otter_welcome_buddy.cogs import hiring_timelines
 from otter_welcome_buddy.cogs import interview_match
+from otter_welcome_buddy.cogs import new_roles
 from otter_welcome_buddy.cogs import new_user_joins
 from otter_welcome_buddy.cogs import roles
 from otter_welcome_buddy.common.utils.discord_ import bot_error_handler
