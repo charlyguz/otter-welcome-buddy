@@ -1,3 +1,4 @@
+import os
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
@@ -58,6 +59,7 @@ async def test_initDatabase(mock_create_all: MagicMock, mocker: MockFixture) -> 
     )
     mock_monitoring_register = mocker.patch.object(monitoring, "register")
     mock_mongo_engine = mocker.patch.object(database, "mongo_connect")
+    mocker.patch.dict(os.environ, {"MONGO_URI": "mongodb://localhost:27020"})
 
     # Act
     await database.init_database()
