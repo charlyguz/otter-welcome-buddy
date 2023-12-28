@@ -65,7 +65,6 @@ async def test_initDatabase(mock_create_all: MagicMock, mocker: MockFixture) -> 
     await database.init_database()
 
     # Assert
-    print(type(mock_create_all))
     mock_get_cache_engine.assert_called_once()
     mock_create_all.assert_called_once_with(mock_engine)
     mock_monitoring_register.assert_called_once()
