@@ -1,7 +1,7 @@
 import asyncio
 import datetime
+import logging
 import random
-import traceback
 from sqlite3 import ProgrammingError
 
 import discord
@@ -19,6 +19,9 @@ from otter_welcome_buddy.common.utils.types.common import DiscordChannelType
 from otter_welcome_buddy.database.handlers.db_interview_match_handler import DbInterviewMatchHandler
 from otter_welcome_buddy.database.models.external.interview_match_model import InterviewMatchModel
 from otter_welcome_buddy.settings import BOT_TIMEZONE
+
+
+logger = logging.getLogger(__name__)
 
 
 _CRONJOB_HOUR: int = 12
@@ -103,9 +106,9 @@ class InterviewMatch(commands.Cog):
                 guild = next(guild for guild in self.bot.guilds if guild.id == entry.guild.id)
                 role = discord.utils.get(guild.roles, name=OTTER_ROLE)
                 if role is None:
-                    print(f"Not role found in {__name__} for guild {guild.name}")
+                    logger.warning("Not role found in %s for guild %s", __name__, guild.name)
             except StopIteration:
-                print(f"Not guild found in {__name__}")
+                logger.error("Not guild found in %s", __name__)
             finally:
                 interview_buddy_message: str = self._ACTIVITY_MESSAGE.format(
                     role_to_mention=role.mention if role is not None else "",
@@ -113,7 +116,7 @@ class InterviewMatch(commands.Cog):
                 )
                 channel: DiscordChannelType | None = self.bot.get_channel(entry.channel_id)
                 if channel is None:
-                    print("Fail getting the channel to send the weekly message")
+                    logger.error("Fail getting the channel to send the weekly message")
                 if not isinstance(channel, discord.TextChannel):
                     raise TypeError("Not valid channel to send the message in")
 
@@ -127,8 +130,7 @@ class InterviewMatch(commands.Cog):
                         interview_match_model=entry,
                     )
                 except Exception:
-                    print("Fail updating the entry on the database")
-                    traceback.print_exc()
+                    logger.exception("Fail updating the entry on the database")
 
     async def _process_weekly_message(
         self,
@@ -167,14 +169,11 @@ class InterviewMatch(commands.Cog):
             await channel.send(message, file=discord.File(img_path))
 
         except discord.Forbidden:
-            print("Not enough permissions to send the weekly message")
-            traceback.print_exc()
+            logger.exception("Not enough permissions to send the weekly message")
         except discord.HTTPException:
-            print("Sending the message failed")
-            traceback.print_exc()
+            logger.exception("Sending the message failed")
         except ValueError:
-            print("The weekly pairs image doesn't have the appropriate size")
-            traceback.print_exc()
+            logger.exception("The weekly pairs image doesn't have the appropriate size")
 
     async def _check_weekly_message(self, weekday: int | None = None) -> None:
         """
@@ -205,7 +204,7 @@ class InterviewMatch(commands.Cog):
                 )
                 if not week_otter_pool:
                     await channel.send("No one wanted to practice 😟")
-                    print("Empty pool for Interview Match")
+                    logger.info("Empty pool for Interview Match")
                     continue
 
                 await self._process_weekly_message(
@@ -215,8 +214,7 @@ class InterviewMatch(commands.Cog):
                 )
 
         except Exception as ex:
-            print(f"Exception {ex} in {__name__}")
-            traceback.print_exc()
+            logger.exception("Exception %s in %s", ex, __name__)
 
     async def _get_weekly_message(
         self,
@@ -227,27 +225,27 @@ class InterviewMatch(commands.Cog):
         try:
             channel: DiscordChannelType | None = self.bot.get_channel(channel_id)
             if channel is None:
-                print("No channel to check the weekly message")
+                logger.error("No channel to check the weekly message")
                 return None
             if not isinstance(channel, discord.TextChannel):
-                print("Not valid channel to send the message in")
+                logger.warning("Not valid channel to send the message in")
                 return None
             cache_message = await channel.fetch_message(message_id)
 
             placeholder: discord.Member | None = channel.guild.get_member(author_id)
             if placeholder is None:
                 # TODO: add a fallback when no placeholder
-                print("No placeholder found for weekly check")
+                logger.error("No placeholder found for weekly check")
                 return None
 
             return channel, cache_message, placeholder
 
         except discord.NotFound:
-            print("No message found to be checked")
+            logger.exception("No message found to be checked")
         except discord.Forbidden:
-            print("Not enough permissions to retrieve weekly message")
+            logger.exception("Not enough permissions to retrieve weekly message")
         except discord.HTTPException:
-            print("Retrieving the message failed")
+            logger.exception("Retrieving the message failed")
 
         return None
 
@@ -290,11 +288,9 @@ class InterviewMatch(commands.Cog):
         try:
             await otter_one.send(message)
         except discord.Forbidden:
-            print(f"Not enough permissions to send the message to {username_one}")
-            traceback.print_exc()
+            logger.exception("Not enough permissions to send the message to %s", username_one)
         except discord.HTTPException:
-            print(f"Sending the message to {username_one} failed")
-            traceback.print_exc()
+            logger.exception("Sending the message to %s failed", username_one)
 
     def _make_pairs(
         self,
@@ -360,7 +356,7 @@ class InterviewMatch(commands.Cog):
         Start Interview Match setting up options
         """
         if ctx.guild is None:
-            print("No guild on context to start the activity")
+            logger.warning("No guild on context to start the activity")
             return
         emoji_selected: str = self.emoji
         get_emoji_message: str = (
@@ -387,7 +383,7 @@ class InterviewMatch(commands.Cog):
                 await ctx.send("This is shameful, but currently we don't support custom emojis 😔")
                 return
         except asyncio.TimeoutError:
-            print("User not reacted to interview_match start")
+            logger.info("User not reacted to interview_match start")
 
         interview_match_model = InterviewMatchModel(
             guild=ctx.guild.id,
@@ -406,14 +402,11 @@ class InterviewMatch(commands.Cog):
                 f"**Interview Match** activity scheduled! See you there {emoji_selected}.",
             )
         except ProgrammingError:
-            print("Error while inserting into database")
-            traceback.print_exc()
+            logger.exception("Error while inserting into database")
         except discord.Forbidden:
-            print("Not enough permissions to send the starting message")
-            traceback.print_exc()
+            logger.exception("Not enough permissions to send the starting message")
         except discord.HTTPException:
-            print("Sending the starting message failed")
-            traceback.print_exc()
+            logger.exception("Sending the starting message failed")
 
     @interview_match.command(brief="Stop interview match activity")  # type: ignore
     @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
@@ -423,7 +416,7 @@ class InterviewMatch(commands.Cog):
         """
         try:
             if ctx.guild is None:
-                print("No guild on context")
+                logger.warning("No guild on context")
                 return
             interview_match_model = DbInterviewMatchHandler.get_interview_match(
                 guild_id=ctx.guild.id,
@@ -436,14 +429,11 @@ class InterviewMatch(commands.Cog):
                 msg = "No activity was running! 😱"
             await ctx.send(msg)
         except ProgrammingError:
-            print("Error while deleting from database")
-            traceback.print_exc()
+            logger.exception("Error while deleting from database")
         except discord.Forbidden:
-            print("Not enough permissions to send the stopping message")
-            traceback.print_exc()
+            logger.exception("Not enough permissions to send the stopping message")
         except discord.HTTPException:
-            print("Sending the stopping message failed")
-            traceback.print_exc()
+            logger.exception("Sending the stopping message failed")
 
     @interview_match.group(  # type: ignore
         brief="Commands related to trigger manually the Interview Match activity!",
