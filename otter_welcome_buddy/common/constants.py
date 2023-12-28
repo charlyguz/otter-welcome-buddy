@@ -10,6 +10,8 @@ class CronExpressions(Enum):
 
 COMMAND_PREFIX: str = ">"
 
+FONT_PATH: str = "assets/fonts/Inter-Regular.ttf"
+
 DATA_DIR: str = "data"
 DATA_FILE: str = "otter-buddy.db"
 DATA_FILE_PATH: str = os.path.join(DATA_DIR, DATA_FILE)

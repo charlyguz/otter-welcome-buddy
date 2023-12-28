@@ -1,4 +1,5 @@
 import os
+from collections.abc import Callable
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 from unittest.mock import Mock
@@ -28,9 +29,21 @@ def mock_guild() -> Guild:
 
 
 @pytest.fixture
-def mock_member() -> Member:
-    mocked_member = Mock()
-    return mocked_member
+def make_mock_member() -> Callable[[int, str], Member]:
+    def _make_mock_member(id: int = 123, name: str = "Test Member") -> Member:
+        mocked_member = Mock()
+        mocked_member.id = id
+        mocked_member.name = name
+        mocked_member.display_name = name
+
+        return mocked_member
+
+    return _make_mock_member
+
+
+@pytest.fixture
+def mock_member(make_mock_member: Callable[[int, str], Member]) -> Member:
+    return make_mock_member()
 
 
 @pytest.fixture
