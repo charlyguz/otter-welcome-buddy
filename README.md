@@ -85,7 +85,7 @@ You need the following environmental variables either in a `.env` file under the
 <!-- DOCKER INSTRUCTIONS -->
 ### Dockerize
 
-If you want to use [`Docker`](https://www.docker.com/), you need to take care of few extra steps.
+If you want to use [`Docker`](https://www.docker.com/) with [`Docker-Compose`](https://docs.docker.com/compose/), you need to take care of few extra steps.
 
 #### Dependencies
 
