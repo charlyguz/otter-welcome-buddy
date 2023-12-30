@@ -37,7 +37,7 @@ jobs:
           registry-username: ${{ secrets.REGISTRY_USERNAME }}
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
           name: ${{ secrets.REGISTRY_NAME }}
-          secure-environment-variables: DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} ANNOUNCEMENT_CHANNEL_ID=${{ secrets.ANNOUNCEMENT_CHANNEL_ID }} MONGO_URI=${{ secrets.MONGO_URI }}
+          secure-environment-variables: DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} ANNOUNCEMENT_CHANNEL_ID=${{ secrets.ANNOUNCEMENT_CHANNEL_ID }} MONGO_URI=${{ secrets.MONGO_URI }} WELCOME_MESSAGES=${{ secrets.WELCOME_MESSAGES}}
           location: ${{ secrets.RESOURCE_GROUP_LOCATION }}
           log-analytics-workspace: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
           log-analytics-workspace-key: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
