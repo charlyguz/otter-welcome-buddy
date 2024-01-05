@@ -9,11 +9,18 @@ from discord import Guild
 from discord import Member
 from discord import Role
 from discord.ext.commands import Bot
+from discord.ext.commands import Context
 from mongoengine import connect as mongo_connect
 from mongoengine import disconnect as mongo_disconnect
 from mongomock import MongoClient
 
 from otter_welcome_buddy.database.models.external.guild_model import GuildModel
+
+
+@pytest.fixture
+def mock_ctx() -> Context:
+    mocked_ctx = AsyncMock()
+    return mocked_ctx
 
 
 @pytest.fixture

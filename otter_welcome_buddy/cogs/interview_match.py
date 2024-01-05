@@ -2,7 +2,6 @@ import asyncio
 import datetime
 import logging
 import random
-from sqlite3 import ProgrammingError
 
 import discord
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -14,6 +13,7 @@ from discord.ext.commands import Context
 from otter_welcome_buddy.common.constants import OTTER_ADMIN
 from otter_welcome_buddy.common.constants import OTTER_MODERATOR
 from otter_welcome_buddy.common.constants import OTTER_ROLE
+from otter_welcome_buddy.common.utils.discord_ import send_plain_message
 from otter_welcome_buddy.common.utils.image import create_match_image
 from otter_welcome_buddy.common.utils.types.common import DiscordChannelType
 from otter_welcome_buddy.database.handlers.db_interview_match_handler import DbInterviewMatchHandler
@@ -398,15 +398,12 @@ class InterviewMatch(commands.Cog):
             DbInterviewMatchHandler.insert_interview_match(
                 interview_match_model=interview_match_model,
             )
-            await ctx.send(
+            await send_plain_message(
+                ctx,
                 f"**Interview Match** activity scheduled! See you there {emoji_selected}.",
             )
-        except ProgrammingError:
+        except Exception:
             logger.exception("Error while inserting into database")
-        except discord.Forbidden:
-            logger.exception("Not enough permissions to send the starting message")
-        except discord.HTTPException:
-            logger.exception("Sending the starting message failed")
 
     @interview_match.command(brief="Stop interview match activity")  # type: ignore
     @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
@@ -427,13 +424,9 @@ class InterviewMatch(commands.Cog):
                 msg = "**Interview Match** activity stopped!"
             else:
                 msg = "No activity was running! 😱"
-            await ctx.send(msg)
-        except ProgrammingError:
-            logger.exception("Error while deleting from database")
-        except discord.Forbidden:
-            logger.exception("Not enough permissions to send the stopping message")
-        except discord.HTTPException:
-            logger.exception("Sending the stopping message failed")
+            await send_plain_message(ctx, msg)
+        except Exception:
+            logger.exception("Error while inserting into database")
 
     @interview_match.group(  # type: ignore
         brief="Commands related to trigger manually the Interview Match activity!",
