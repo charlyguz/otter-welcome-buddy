@@ -7,6 +7,7 @@ from otter_welcome_buddy.cogs import events
 from otter_welcome_buddy.cogs import hiring_timelines
 from otter_welcome_buddy.cogs import interview_match
 from otter_welcome_buddy.cogs import new_user_joins
+from otter_welcome_buddy.cogs import roles
 
 
 logger = logging.getLogger(__name__)
@@ -26,6 +27,7 @@ async def register_cogs(bot: Bot) -> None:
         new_user_joins,
         hiring_timelines,
         interview_match,
+        roles,
     ]
 
     for cog in allowed_cogs:

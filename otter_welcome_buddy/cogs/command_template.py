@@ -15,7 +15,7 @@ class CommandTemplate(commands.Cog):
     def __init__(self, bot: Bot):
         self.bot: Bot = bot
 
-    @commands.group()
+    @commands.group(invoke_without_command=True)
     async def my_group(self, ctx: Context) -> None:
         """
         CommandTemplate will send the help when no final command is invoked
@@ -26,7 +26,7 @@ class CommandTemplate(commands.Cog):
     async def my_command(self, _: Context) -> None:
         """!my_group my_command"""
 
-    @my_group.group()  # type: ignore
+    @my_group.group(invoke_without_command=True)  # type: ignore
     async def my_group_2(self, ctx: Context) -> None:
         """
         CommandTemplate will send the help when no final command is invoked
