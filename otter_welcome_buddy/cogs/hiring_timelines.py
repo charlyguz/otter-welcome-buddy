@@ -1,5 +1,6 @@
-import os
+import logging
 
+import discord
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from discord import TextChannel
 from discord.ext import commands
@@ -7,9 +8,21 @@ from discord.ext.commands import Bot
 from discord.ext.commands import Context
 
 from otter_welcome_buddy.common.constants import CronExpressions
+from otter_welcome_buddy.common.constants import OTTER_ADMIN
+from otter_welcome_buddy.common.constants import OTTER_MODERATOR
 from otter_welcome_buddy.common.utils.dates import DateUtils
+from otter_welcome_buddy.common.utils.discord_ import send_plain_message
 from otter_welcome_buddy.common.utils.types.common import DiscordChannelType
+from otter_welcome_buddy.database.handlers.db_announcements_config_handler import (
+    DbAnnouncementsConfigHandler,
+)
+from otter_welcome_buddy.database.models.external.announcements_config_model import (
+    AnnouncementsConfigModel,
+)
 from otter_welcome_buddy.formatters import timeline
+
+
+logger = logging.getLogger(__name__)
 
 
 class Timelines(commands.Cog):
@@ -27,8 +40,18 @@ class Timelines(commands.Cog):
 
         self.__configure_scheduler()
 
+    def __configure_scheduler(self) -> None:
+        """Configure and start scheduler"""
+        self.scheduler.add_job(
+            self._send_message_on_channel,
+            DateUtils.create_cron_trigger_from(
+                CronExpressions.DAY_ONE_OF_EACH_MONTH_CRON.value,
+            ),
+        )
+        self.scheduler.start()
+
     @commands.group(
-        brief="Commands related to Timelines messages!",
+        brief="Commands related to Timelines messages",
         invoke_without_command=True,
         pass_context=True,
     )
@@ -38,25 +61,63 @@ class Timelines(commands.Cog):
         """
         await ctx.send_help(ctx.command)
 
-    @timelines.command(brief="Start the cronjob for the timeline messages")  # type: ignore
-    async def start(self, _: Context) -> None:
+    @timelines.command(  # type: ignore
+        brief="Set the interview season announcements for a server",
+        usage="<text_channel>",
+    )
+    @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
+    async def start(
+        self,
+        ctx: Context,
+        channel: TextChannel,
+    ) -> None:
         """Command to interact with the bot and start cron"""
-        self.__configure_scheduler()
-
-    @timelines.command(brief="Stop the cronjob for the timeline messages")  # type: ignore
-    async def stop(self, _: Context) -> None:
-        """Command to interact with the bot and stop cron"""
-        self.scheduler.stop()
-
-    def __configure_scheduler(self) -> None:
-        """Configure and start scheduler"""
-        self.scheduler.add_job(
-            self.send_message_on_channel,
-            DateUtils.create_cron_trigger_from(
-                CronExpressions.DAY_ONE_OF_EACH_MONTH_CRON.value,
-            ),
+        if ctx.guild is None:
+            logger.warning("No guild on context")
+            return
+        announcements_config_model = AnnouncementsConfigModel(
+            guild=ctx.guild.id,
+            channel_id=channel.id,
         )
-        self.scheduler.start()
+
+        try:
+            DbAnnouncementsConfigHandler.insert_announcements_config(
+                announcements_config_model=announcements_config_model,
+            )
+            await send_plain_message(
+                ctx,
+                "**Announcement config** updated! Be ready to start receiving more announcements.",
+            )
+        except Exception:
+            logger.exception("Error while inserting into database")
+
+    @timelines.command(  # type: ignore
+        brief="Remove the interview season announcements for a server",
+        usage="<text_channel>",
+    )
+    @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
+    async def stop(
+        self,
+        ctx: Context,
+    ) -> None:
+        """Command to interact with the bot and start cron"""
+        if ctx.guild is None:
+            logger.warning("No guild on context")
+            return
+
+        try:
+            announcements_config = DbAnnouncementsConfigHandler.get_announcements_config(
+                guild_id=ctx.guild.id,
+            )
+            msg: str = ""
+            if announcements_config is not None:
+                DbAnnouncementsConfigHandler.delete_announcements_config(guild_id=ctx.guild.id)
+                msg = "**Announcement config** removed!"
+            else:
+                msg = "No config set! 😱"
+            await send_plain_message(ctx, msg)
+        except Exception:
+            logger.exception("Error while inserting into database")
 
     def _get_hiring_events(self) -> str:
         """Get hiring events for current month"""
@@ -64,14 +125,45 @@ class Timelines(commands.Cog):
             DateUtils.get_current_month(),
         )
 
-    async def send_message_on_channel(self) -> None:
-        """Sends message to announcement channel at the start of month"""
-        channel_id: int = int(os.environ["ANNOUNCEMENT_CHANNEL_ID"])
-        channel: DiscordChannelType | None = self.bot.get_channel(channel_id)
-        if isinstance(channel, TextChannel):
-            await channel.send(self._get_hiring_events())
-        else:
-            raise TypeError("Not valid channel to send the message in")
+    async def _send_message_on_channel(self) -> None:
+        """
+        Check the database to see which guilds send the message to at the start of the month
+        """
+        for entry in DbAnnouncementsConfigHandler.get_all_announcements_configs():
+            try:
+                guild: discord.Guild = await self.bot.fetch_guild(entry.guild.id)
+                channel: DiscordChannelType = await guild.fetch_channel(entry.channel_id)
+                if not isinstance(channel, discord.TextChannel):
+                    raise TypeError("Not valid channel to send the message in")
+                await channel.send(self._get_hiring_events())
+            except discord.NotFound:
+                logger.error("Fail getting channel %s in guild %s", entry.channel_id, guild.id)
+            except discord.Forbidden:
+                logger.exception("Not enough permissions to fetch the data in %s", __name__)
+            except discord.HTTPException:
+                logger.error("Not guild found in %s", __name__)
+            except Exception:
+                logger.exception("Error while sending the announcement in %s", __name__)
+
+    @timelines.group(  # type: ignore
+        brief="Commands related to trigger manually the timeline announcement",
+        invoke_without_command=True,
+    )
+    @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
+    async def run(self, ctx: Context) -> None:
+        """
+        Admin commands related to trigger and test the announcement
+        """
+        await ctx.send_help(ctx.command)
+
+    @run.command(brief="Admin command to trigger the send message on channel")  # type: ignore
+    @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
+    async def send(self, _: Context) -> None:
+        """
+        Admin command that execute the send message on channel method,
+        this is executed as usual to all the guilds
+        """
+        await self._send_message_on_channel()
 
 
 async def setup(bot: Bot) -> None:

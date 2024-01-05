@@ -4,6 +4,8 @@ from mongoengine import IntField
 from mongoengine import ReferenceField
 from mongoengine import StringField
 
+from otter_welcome_buddy.database.models.external.guild_model import GuildModel
+
 
 class InterviewMatchModel(Document):
     """
@@ -18,7 +20,7 @@ class InterviewMatchModel(Document):
         message_id (int):       Identifier of the message that will be processed for the activity
     """
 
-    guild = ReferenceField("GuildModel", reverse_delete_rule=CASCADE, required=True)
+    guild = ReferenceField(GuildModel, reverse_delete_rule=CASCADE, primary_key=True)
     author_id = IntField(required=True)
     channel_id = IntField(required=True)
     day_of_the_week = IntField(required=True)

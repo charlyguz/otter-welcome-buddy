@@ -2,6 +2,8 @@ from datetime import datetime
 
 from apscheduler.triggers.cron import CronTrigger
 
+from otter_welcome_buddy.settings import BOT_TIMEZONE
+
 
 class DateUtils:
     """Utility class for datetime python library"""
@@ -14,4 +16,4 @@ class DateUtils:
     @staticmethod
     def create_cron_trigger_from(crontab: str) -> CronTrigger:
         """Returns cron trigger from crontab"""
-        return CronTrigger.from_crontab(crontab)
+        return CronTrigger.from_crontab(crontab, BOT_TIMEZONE)
