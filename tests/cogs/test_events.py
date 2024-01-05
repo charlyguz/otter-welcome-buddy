@@ -51,7 +51,7 @@ async def test_onReady_printMessage(
 
 
 @pytest.mark.asyncio
-@patch("otter_welcome_buddy.cogs.events.WELCOME_MESSAGES", new=["111"])
+@patch("otter_welcome_buddy.cogs.events.WELCOME_MESSAGES", new={111: [111]})
 async def test_onRawReactionAdd_addRole(
     mocker: MockFixture,
     mock_bot: Bot,

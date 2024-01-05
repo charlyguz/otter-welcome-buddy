@@ -7,6 +7,7 @@ from discord.ext.commands import Bot
 from discord.ext.commands import when_mentioned_or
 from dotenv import load_dotenv
 
+from otter_welcome_buddy.cogs.roles import Roles
 from otter_welcome_buddy.common.constants import ALL_DIRS
 from otter_welcome_buddy.common.constants import COMMAND_PREFIX
 from otter_welcome_buddy.common.constants import LOG_FILE_PATH
@@ -52,6 +53,7 @@ async def main() -> None:
 
     async with bot:
         await database.init_database()
+        Roles.init_welcome_messages()
         await cogs.register_cogs(bot)
         await bot.start(os.environ["DISCORD_TOKEN"])
 

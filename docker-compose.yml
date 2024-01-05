@@ -8,7 +8,6 @@ services:
     restart: unless-stopped
     environment:
       DISCORD_TOKEN: "${DISCORD_TOKEN}"
-      WELCOME_MESSAGES: "${WELCOME_MESSAGES}"
       MONGO_URI: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/OtterBuddy"
     volumes:
       - ./:/otter-buddy

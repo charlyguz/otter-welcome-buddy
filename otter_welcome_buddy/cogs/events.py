@@ -5,10 +5,10 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 
 from otter_welcome_buddy.common.constants import OTTER_ROLE
+from otter_welcome_buddy.common.constants import WELCOME_MESSAGES
 from otter_welcome_buddy.database.handlers.db_guild_handler import DbGuildHandler
 from otter_welcome_buddy.database.models.external.guild_model import GuildModel
 from otter_welcome_buddy.formatters import debug
-from otter_welcome_buddy.settings import WELCOME_MESSAGES
 from otter_welcome_buddy.startup.database import init_guild_table
 
 
@@ -48,11 +48,15 @@ class BotEvents(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent) -> None:
         """Event fired when a user react to the welcome message, giving the entry role to him"""
-        # Check if the user to add the role is valid
-        if payload.member is None:
-            logger.warning("Missing member to add role in %s", __name__)
+        # Check if the user and guild to add the role is valid
+        if payload.member is None or payload.guild_id is None:
+            logger.warning("Missing data to add role in %s", __name__)
             return
-        if not WELCOME_MESSAGES or str(payload.message_id) in WELCOME_MESSAGES:
+
+        if (
+            WELCOME_MESSAGES.get(payload.guild_id) is None
+            or payload.message_id in WELCOME_MESSAGES[payload.guild_id]
+        ):
             try:
                 guild = next(guild for guild in self.bot.guilds if guild.id == payload.guild_id)
                 member_role = discord.utils.get(guild.roles, name=OTTER_ROLE)

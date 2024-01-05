@@ -78,7 +78,6 @@ You need to install all the prerequisites before following with the instalation 
 You need the following environmental variables either in a `.env` file under the root directory of this repository or directly added at your system (or your Docker instance):
 
 * `DISCORD_TOKEN`: the Discord Bot Token retrieved from the [developer page](https://discord.com/developers/applications).
-* `WELCOME_MESSAGES`: [`message ids`](https://discordpy.readthedocs.io/en/stable/api.html?highlight=message%20id#discord.Message.id) separated by `,` that give `OTTER_ROLE` when reacted to.
 * `MONGO_URI`: address of the [MongoDB](https://docs.mongodb.com/manual/reference/connection-string/) instance to be used, could be local or [Cluster from Atlas](https://www.mongodb.com/cloud/atlas).
 
 

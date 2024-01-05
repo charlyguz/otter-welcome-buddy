@@ -7,6 +7,7 @@ from discord.ext.commands import Context
 from otter_welcome_buddy.common.constants import OTTER_ADMIN
 from otter_welcome_buddy.common.constants import OTTER_MODERATOR
 from otter_welcome_buddy.common.constants import OTTER_ROLE
+from otter_welcome_buddy.common.constants import WELCOME_MESSAGES
 from otter_welcome_buddy.common.utils.discord_ import send_plain_message
 from otter_welcome_buddy.database.handlers.db_role_config_handler import DbRoleConfigHandler
 from otter_welcome_buddy.database.models.external.role_config_model import BaseRoleConfigModel
@@ -36,6 +37,24 @@ class Roles(commands.Cog):
         Roles will send the help when no final command is invoked
         """
         await ctx.send_help(ctx.command)
+
+    @staticmethod
+    def init_welcome_messages() -> None:
+        """
+        Initialize the welcome messages from the database
+        """
+        base_role_config_models: list[
+            BaseRoleConfigModel
+        ] = DbRoleConfigHandler.get_all_base_role_configs()
+        for base_role_config_model in base_role_config_models:
+            WELCOME_MESSAGES[base_role_config_model.guild.id] = base_role_config_model.message_ids
+
+    @staticmethod
+    def _update_welcome_messages(guild_id: int, message_ids: list[int]) -> None:
+        """
+        Update the welcome messages for a guild
+        """
+        WELCOME_MESSAGES[guild_id] = message_ids
 
     @roles.group(  # type: ignore
         brief="Commands related to give the otter role to the users "
@@ -79,6 +98,10 @@ class Roles(commands.Cog):
                 base_role_config_model=base_role_config_model,
             )
 
+            self._update_welcome_messages(
+                guild_id=base_role_config_model.guild.id,
+                message_ids=base_role_config_model.message_ids,
+            )
             await send_plain_message(
                 ctx,
                 f"**Welcome message** saved! React to it to give the role **{OTTER_ROLE}**",
@@ -105,6 +128,7 @@ class Roles(commands.Cog):
                 if message_id is None:
                     DbRoleConfigHandler.delete_base_role_config(guild_id=ctx.guild.id)
                     msg = "**Welcome messages** removed!"
+                    message_ids = []
                 else:
                     base_role_config_model = (
                         DbRoleConfigHandler.delete_message_from_base_role_config(
@@ -112,7 +136,14 @@ class Roles(commands.Cog):
                             input_message_id=message_id,
                         )
                     )
+                    message_ids = (
+                        base_role_config_model.message_ids if base_role_config_model else []
+                    )
                     msg = "**Welcome message** deleted!"
+                self._update_welcome_messages(
+                    guild_id=ctx.guild.id,
+                    message_ids=message_ids,
+                )
             else:
                 msg = "No welcome messages set! 😱"
             await send_plain_message(ctx, msg)
