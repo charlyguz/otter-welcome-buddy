@@ -33,5 +33,3 @@ OTTER_MODERATOR: str = "Collaborator"
 # Discord role that give access to the remaining channels and is
 # given when the user react to WELCOME_MESSAGES
 OTTER_ROLE: str = "Interviewee"
-
-WELCOME_MESSAGES: dict[int, list[int]] = {}
