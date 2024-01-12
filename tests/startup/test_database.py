@@ -52,7 +52,6 @@ async def test_initDatabase(mock_create_all: MagicMock, mocker: MockFixture) -> 
     # Arrange
     mock_engine = MagicMock()
 
-    mocker.patch.dict(os.environ, {"MONGO_URI": "mongodb://localhost:27020"})
     mock_get_cache_engine = mocker.patch.object(
         database,
         "get_cache_engine",

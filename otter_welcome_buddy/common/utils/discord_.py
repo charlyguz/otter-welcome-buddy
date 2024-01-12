@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.ext.commands import Context
+from emoji import is_emoji
 
 from otter_welcome_buddy.common.constants import COMMAND_PREFIX
 from otter_welcome_buddy.common.utils.types.common import DiscordChannelType
@@ -113,6 +114,35 @@ async def get_member_by_id(guild: discord.Guild, member_id: int) -> discord.Memb
             logger.error("Getting the member %s failed", member_id)
 
     return member
+
+
+def convert_str_to_partial_emoji(
+    input_emoji: str,
+    guild: discord.Guild | None = None,
+) -> discord.PartialEmoji | None:
+    """Convert a string to a PartialEmoji object if it is a valid emoji"""
+    partial_emoji = discord.PartialEmoji.from_str(input_emoji)
+    is_valid: bool = False
+    if partial_emoji.is_unicode_emoji():
+        is_valid = is_emoji(partial_emoji.name)
+    elif partial_emoji.is_custom_emoji() and guild is not None:
+        is_valid = discord.utils.get(guild.emojis, name=partial_emoji.name) is not None
+
+    return partial_emoji if is_valid else None
+
+
+async def find_message_in_guild(guild: discord.Guild, message_id: int) -> discord.Message | None:
+    """Find a message by its id in a guild"""
+    for channel in guild.text_channels:
+        try:
+            message = await channel.fetch_message(message_id)
+            if message:
+                return message
+        except discord.NotFound:
+            continue
+        except discord.Forbidden:
+            continue
+    return None
 
 
 async def bot_error_handler(ctx: Context, error: Exception) -> None:  # noqa: C901

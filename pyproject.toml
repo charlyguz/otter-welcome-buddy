@@ -13,6 +13,7 @@ SQLAlchemy = "^2.0.8"
 mongoengine = "^0.27.0"
 types-requests = "^2.31.0.10"
 Pillow = "^10.1.0"
+emoji = "^2.9.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.0"
@@ -26,7 +27,7 @@ pytest-mock = "^3.10.0"
 mongomock = "^4.1.2"
 
 [tool.pylint."MESSAGES CONTROL"]
-disable = ["E0401", "E0611", "C0114", "R0903", "R0913", "W0718", "W0511"]
+disable = ["E0401", "E0611", "C0114", "R0903", "W0718", "W0511"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
