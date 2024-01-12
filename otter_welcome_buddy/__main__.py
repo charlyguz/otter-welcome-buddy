@@ -3,6 +3,8 @@ import logging
 import os
 from logging.handlers import TimedRotatingFileHandler
 
+from discord import Activity
+from discord import ActivityType
 from discord.ext.commands import Bot
 from discord.ext.commands import when_mentioned_or
 from dotenv import load_dotenv
@@ -49,6 +51,10 @@ async def main() -> None:
     bot: Bot = Bot(
         command_prefix=when_mentioned_or(COMMAND_PREFIX),
         intents=intents.get_registered_intents(),
+        activity=Activity(
+            type=ActivityType.listening,
+            name=f"{COMMAND_PREFIX}help",
+        ),
     )
 
     async with bot:

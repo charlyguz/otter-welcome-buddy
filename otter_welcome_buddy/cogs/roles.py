@@ -75,6 +75,8 @@ class Roles(commands.Cog):
         Add one or more message ids separated by whitespaces
         to the database to be used as welcome messages
         """
+        if len(input_message_ids) == 0:
+            return
         # Remove duplicates
         message_ids: list[int] = list(set(input_message_ids))
         if ctx.guild is None:

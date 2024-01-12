@@ -1,9 +1,11 @@
 import logging
 
 import discord
+from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.ext.commands import Context
 
+from otter_welcome_buddy.common.constants import COMMAND_PREFIX
 from otter_welcome_buddy.common.utils.types.common import DiscordChannelType
 
 
@@ -13,6 +15,16 @@ logger = logging.getLogger(__name__)
 def get_basic_embed(title: str | None = None, description: str | None = None) -> discord.Embed:
     """Get a basic embed"""
     return discord.Embed(title=title, description=description, color=discord.Color.teal())
+
+
+def get_warning_embed(description: str | None = None) -> discord.Embed:
+    """Get an embed with yellow color to warn the user"""
+    return discord.Embed(description=description, color=discord.Color.yellow())
+
+
+def get_error_embed(description: str | None = None) -> discord.Embed:
+    """Get an embed with red color to flag the user"""
+    return discord.Embed(description=description, color=discord.Color.red())
 
 
 async def send_plain_message(ctx: Context, message: str) -> None:
@@ -101,3 +113,62 @@ async def get_member_by_id(guild: discord.Guild, member_id: int) -> discord.Memb
             logger.error("Getting the member %s failed", member_id)
 
     return member
+
+
+async def bot_error_handler(ctx: Context, error: Exception) -> None:  # noqa: C901
+    """Handler when an error is raised in a command"""
+    if isinstance(error, commands.CommandNotFound):
+        pass
+
+    if ctx.command is None:
+        logger.warning("Command not found when handling error")
+        return
+
+    if getattr(error, "handled", False):
+        # Errors already handled in cogs should have .handled = True
+        return
+
+    if isinstance(
+        error,
+        (
+            commands.BadArgument,
+            commands.MissingRequiredArgument,
+        ),
+    ):
+        command = ctx.command
+        command.reset_cooldown(ctx)
+        usage = f"`{COMMAND_PREFIX}{str(command)} "
+        params = []
+        for key, value in command.params.items():
+            if key not in ["self", "ctx"]:
+                is_optional = any(
+                    substring in str(value) for substring in ["NoneType", "Optional", "="]
+                )
+                params.append(f"[{key}]" if is_optional else f"<{key}>")
+        usage += " ".join(params)
+        usage += "`"
+        if command.help:
+            usage += f"\n\n{command.help}"
+        await ctx.author.send(embed=get_warning_embed(f"The correct usage is: {usage}"))
+    elif isinstance(error, commands.MissingPermissions):
+        await ctx.author.send(
+            embed=get_error_embed("You don't have enough permissions to execute this command"),
+        )
+    elif isinstance(error, commands.DisabledCommand):
+        await ctx.author.send(
+            embed=get_warning_embed("Sorry, this command is temporarily disabled"),
+        )
+    elif isinstance(error, commands.CommandNotFound):
+        await ctx.author.send(
+            embed=get_warning_embed(
+                "Oops! Looks like your command doesn' exist, "
+                f"type `{COMMAND_PREFIX}help` to learn more",
+            ),
+        )
+    else:
+        msg = f"Ignoring exception in command {ctx.command}:"
+        extra = {
+            "message_content": ctx.message.content,
+            "jump_url": ctx.message.jump_url,
+        }
+        logger.exception(msg, extra=extra)
