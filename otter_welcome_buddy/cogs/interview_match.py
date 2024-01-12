@@ -13,6 +13,9 @@ from discord.ext.commands import Context
 from otter_welcome_buddy.common.constants import OTTER_ADMIN
 from otter_welcome_buddy.common.constants import OTTER_MODERATOR
 from otter_welcome_buddy.common.constants import OTTER_ROLE
+from otter_welcome_buddy.common.utils.discord_ import get_channel_by_id
+from otter_welcome_buddy.common.utils.discord_ import get_member_by_id
+from otter_welcome_buddy.common.utils.discord_ import get_message_by_id
 from otter_welcome_buddy.common.utils.discord_ import send_plain_message
 from otter_welcome_buddy.common.utils.image import create_match_image
 from otter_welcome_buddy.common.utils.types.common import DiscordChannelType
@@ -114,7 +117,10 @@ class InterviewMatch(commands.Cog):
                     role_to_mention=role.mention if role is not None else "",
                     emoji=entry.emoji,
                 )
-                channel: DiscordChannelType | None = self.bot.get_channel(entry.channel_id)
+                channel: DiscordChannelType | None = await get_channel_by_id(
+                    self.bot,
+                    entry.channel_id,
+                )
                 if channel is None:
                     logger.error("Fail getting the channel to send the weekly message")
                 if not isinstance(channel, discord.TextChannel):
@@ -223,22 +229,19 @@ class InterviewMatch(commands.Cog):
         author_id: int,
     ) -> tuple[discord.TextChannel, discord.Message, discord.Member] | None:
         try:
-            channel: DiscordChannelType | None = self.bot.get_channel(channel_id)
-            if channel is None:
-                logger.error("No channel to check the weekly message")
+            message_data = await get_message_by_id(self.bot, channel_id, message_id)
+            if message_data is None:
+                logger.error("No message found to be checked")
                 return None
-            if not isinstance(channel, discord.TextChannel):
-                logger.warning("Not valid channel to send the message in")
-                return None
-            cache_message = await channel.fetch_message(message_id)
+            message, channel = message_data
 
-            placeholder: discord.Member | None = channel.guild.get_member(author_id)
+            placeholder: discord.Member | None = await get_member_by_id(channel.guild, author_id)
             if placeholder is None:
                 # TODO: add a fallback when no placeholder
                 logger.error("No placeholder found for weekly check")
                 return None
 
-            return channel, cache_message, placeholder
+            return channel, message, placeholder
 
         except discord.NotFound:
             logger.exception("No message found to be checked")

@@ -11,6 +11,7 @@ from otter_welcome_buddy.common.constants import CronExpressions
 from otter_welcome_buddy.common.constants import OTTER_ADMIN
 from otter_welcome_buddy.common.constants import OTTER_MODERATOR
 from otter_welcome_buddy.common.utils.dates import DateUtils
+from otter_welcome_buddy.common.utils.discord_ import get_channel_by_id
 from otter_welcome_buddy.common.utils.discord_ import send_plain_message
 from otter_welcome_buddy.common.utils.types.common import DiscordChannelType
 from otter_welcome_buddy.database.handlers.db_announcements_config_handler import (
@@ -29,8 +30,9 @@ class Timelines(commands.Cog):
     """
     Timelines command events, where notifications about hiring events are sent every month
     Commands:
-        timelines start:     Start cronjob for timeline messages
-        timelines stop:      Stop cronjob for timeline messages
+        timelines start:    Start cronjob for timeline messages
+        timelines stop:     Stop cronjob for timeline messages
+        timelines run send: Send announcement to configured channel
     """
 
     def __init__(self, bot: Bot, messages_formatter: type[timeline.Formatter]):
@@ -93,7 +95,6 @@ class Timelines(commands.Cog):
 
     @timelines.command(  # type: ignore
         brief="Remove the interview season announcements for a server",
-        usage="<text_channel>",
     )
     @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
     async def stop(
@@ -131,17 +132,18 @@ class Timelines(commands.Cog):
         """
         for entry in DbAnnouncementsConfigHandler.get_all_announcements_configs():
             try:
-                guild: discord.Guild = await self.bot.fetch_guild(entry.guild.id)
-                channel: DiscordChannelType = await guild.fetch_channel(entry.channel_id)
-                if not isinstance(channel, discord.TextChannel):
-                    raise TypeError("Not valid channel to send the message in")
+                channel: DiscordChannelType | None = await get_channel_by_id(
+                    self.bot,
+                    entry.channel_id,
+                )
+                if channel is None or not isinstance(channel, discord.TextChannel):
+                    logger.error("Channel %s invalid to send the hiring message", entry.channel_id)
+                    return
                 await channel.send(self._get_hiring_events())
-            except discord.NotFound:
-                logger.error("Fail getting channel %s in guild %s", entry.channel_id, guild.id)
             except discord.Forbidden:
-                logger.exception("Not enough permissions to fetch the data in %s", __name__)
+                logger.error("Not enough permissions to send the message in %s", __name__)
             except discord.HTTPException:
-                logger.error("Not guild found in %s", __name__)
+                logger.error("Sending the message failed in %s", __name__)
             except Exception:
                 logger.exception("Error while sending the announcement in %s", __name__)
 

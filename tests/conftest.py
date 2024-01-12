@@ -1,13 +1,14 @@
 import os
 from collections.abc import Callable
-from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 from unittest.mock import Mock
 
 import pytest
 from discord import Guild
 from discord import Member
+from discord import Message
 from discord import Role
+from discord import TextChannel
 from discord.ext.commands import Bot
 from discord.ext.commands import Context
 from mongoengine import connect as mongo_connect
@@ -19,13 +20,13 @@ from otter_welcome_buddy.database.models.external.guild_model import GuildModel
 
 @pytest.fixture
 def mock_ctx() -> Context:
-    mocked_ctx = AsyncMock()
+    mocked_ctx = Mock()
     return mocked_ctx
 
 
 @pytest.fixture
 def mock_bot() -> Bot:
-    mocked_bot = AsyncMock()
+    mocked_bot = Mock()
     return mocked_bot
 
 
@@ -57,6 +58,18 @@ def mock_member(make_mock_member: Callable[[int, str], Member]) -> Member:
 def mock_role() -> Role:
     mocked_role = Mock()
     return mocked_role
+
+
+@pytest.fixture
+def mock_text_channel() -> TextChannel:
+    mocked_text_channel = Mock()
+    return mocked_text_channel
+
+
+@pytest.fixture
+def mock_message() -> Message:
+    mocked_message = Mock()
+    return mocked_message
 
 
 @pytest.fixture
