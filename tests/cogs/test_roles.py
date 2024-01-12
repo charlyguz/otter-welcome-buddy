@@ -74,17 +74,29 @@ async def test__checkWelcomeMessageReaction_Succeed(
     cog = roles.Roles(mock_bot)
     cog._WELCOME_MESSAGES_CONFIG = {mock_guild.id: [mocked_message_id]}
 
-    mock_get_guild = mocker.patch.object(roles, "get_guild_by_id", new=AsyncMock(return_value=mock_guild))
-    mock_get_member = mocker.patch.object(roles, "get_member_by_id", new=AsyncMock(return_value=mock_member))
+    mock_get_guild = mocker.patch.object(
+        roles,
+        "get_guild_by_id",
+        new=AsyncMock(return_value=mock_guild),
+    )
+    mock_get_member = mocker.patch.object(
+        roles,
+        "get_member_by_id",
+        new=AsyncMock(return_value=mock_member),
+    )
     mock_get_role = mocker.patch("discord.utils.get", return_value=mock_role)
     mock_add_roles = mocker.patch.object(Member, "add_roles")
 
     # Act
-    await cog._check_welcome_message_reaction(mock_guild.id, mock_member, mock_member.id, mocked_message_id)
+    await cog._check_welcome_message_reaction(
+        mock_guild.id,
+        mock_member,
+        mock_member.id,
+        mocked_message_id,
+    )
 
     # Assert
     mock_get_guild.assert_called_once()
     mock_get_member.assert_not_called()
     mock_get_role.assert_called_once()
     mock_add_roles.assert_called_once()
-        
